@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "catiphone-new",
+    "slug": "catiphone-new",
+    "sdkVersion": "53.0.0",
+    "android": {
+      "package": "com.hemacdesarrollo.catiphonenew"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}
