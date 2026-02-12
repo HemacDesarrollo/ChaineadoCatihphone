@@ -3,11 +3,13 @@
     "name": "catiphone-new",
     "slug": "catiphone-new",
     "sdkVersion": "53.0.0",
+    "orientation": "portrait",
     "android": {
       "package": "com.hemacdesarrollo.catiphonenew"
     },
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      "expo-secure-store"
     ]
   }
 }

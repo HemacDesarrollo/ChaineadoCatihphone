@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
+import PuntosConexionScreen from "../screens/PuntosConexionScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -11,18 +12,22 @@ export default function AppNavigator() {
   const { user } = useContext(AuthContext);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
+        <>
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+          />
+          <Stack.Screen
+            name="PuntosConexion"
+            component={PuntosConexionScreen}
+          />
+        </>
       ) : (
         <Stack.Screen
           name="Login"
           component={LoginScreen}
-          options={{ headerShown: false }}
         />
       )}
     </Stack.Navigator>

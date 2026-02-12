@@ -1,17 +1,14 @@
 import React from "react";
-import { useColorScheme } from "react-native";
-import { NavigationContainer, DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
+import { AuthProvider } from "./src/context/AuthContext";
 import AppNavigator from "./src/navigation/AppNavigator";
 
 export default function App() {
-  const scheme = useColorScheme();
-
   return (
-    <NavigationContainer
-      theme={scheme === "dark" ? DarkTheme : DefaultTheme}
-    >
-      <AppNavigator />
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
- 
