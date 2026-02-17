@@ -9,7 +9,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/Ionicons";
 import { AuthContext } from "../context/AuthContext";
-import { apiDev } from "../api/connect";
+import { api } from "../api/connect";
 
 export default function HomeScreen({ navigation }) {
   const { user } = useContext(AuthContext);
@@ -17,7 +17,7 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const testToken = async () => {
       try {
-        const response = await apiDev.get("/api/mobile/test", {
+        const response = await api.get("/APP/auth/test", {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },

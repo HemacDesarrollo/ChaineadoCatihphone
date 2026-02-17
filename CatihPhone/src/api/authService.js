@@ -1,7 +1,7 @@
-import { apiDev } from "./connect";
+import { api } from "./connect";
 
 export const login = async (username, password) => {
-  const response = await apiDev.post("/api/mobile/auth/login", {
+  const response = await api.post("/APP/auth/login", {
     usuario: username,
     password,
   });
