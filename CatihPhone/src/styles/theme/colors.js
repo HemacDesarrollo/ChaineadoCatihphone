@@ -1,20 +1,30 @@
-export const lightTheme = {
-  background: "#f5f6fa",
-  card: "#ffffff",
+const lightTheme = {
+  background: "#F8FAFC",
+  card: "#FFFFFF",
   text: "#fff",
-  textCard: "#475569",
-  input: "#e9e9ef",
-  border: "#dcdde1",
-  primary: "#6c5ce7",
+  textColor: "#0F172A",
+  border: "#E2E8F0",
+  primary: "#2563EB",
+  link: "#fff",
+  linkAccent: "#22C55E"
 };
 
-export const darkTheme = {
-  background: "#0f0f1a",
-  card: "#ffffffff",
-  text: "#fff",
-  textCard: "#475569",
-  textColor: "#1a1a1a",
-  input: "#2a2a3d",
-  border: "#3d3d5c",
-  primary: "#9b8cff",
+const darkTheme = {
+  background: "#0F172A",
+  card: "#fff",
+  text: "#FFFFFF",
+  textColor: "#FFFFFF",
+  border: "#334155",
+  primary: "#3B82F6",
+  link: "#fff",
+  linkAccent: "#22C55E"
 };
+
+const status = {
+  online: "#22C55E",
+  busy: "#F59E0B",
+  away: "#9E9E9E",
+}
+
+
+export { lightTheme, darkTheme, status };

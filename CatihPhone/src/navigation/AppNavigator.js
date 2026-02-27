@@ -5,22 +5,30 @@ import { AuthContext } from "../context/AuthContext";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import PuntosConexionScreen from "../screens/PuntosConexionScreen";
+import RecuperarPasswordScreen from "../screens/RecuperarPasswordScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
 
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {user ? (
-        <>
-          <Stack.Screen name="Home" component={HomeScreen}/>
-          <Stack.Screen name="PuntosConexion" component={PuntosConexionScreen}/>
-        </>
-      ) : (
-        <Stack.Screen name="Login" component={LoginScreen}/>
-      )}
-    </Stack.Navigator>
-  );
+if (loading) return null; 
+
+return (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    {user ? (
+      <>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="PuntosConexion" component={PuntosConexionScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen}/>
+      </>
+    ) : (
+      <>
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="RecuperarPassword" component={RecuperarPasswordScreen} options={{headerShown: false}} />
+      </>
+    )}
+  </Stack.Navigator>
+);
 }

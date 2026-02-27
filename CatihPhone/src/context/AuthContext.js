@@ -1,19 +1,13 @@
-import React, { createContext, useState } from "react";
-import * as SecureStore from "expo-secure-store";
+import React, { createContext } from "react";
+import { useAuth } from "../hooks/useAuth";
 
-export const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-
-  const logout = async () => {
-    await SecureStore.deleteItemAsync("CATI_user");
-    await SecureStore.deleteItemAsync("CATI_pass");
-    setUser(null);
-  };
+  const auth = useAuth();
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout }}>
+    <AuthContext.Provider value={auth}>
       {children}
     </AuthContext.Provider>
   );
