@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef, useEffect} from "react";
 import {
   View,
   Text,
@@ -17,12 +17,15 @@ import styles from "../styles/theme/profileStyles";
 import Icon from "react-native-vector-icons/Ionicons";
 import AppHeader from "../components/AppHeader";
 import { useNavigation } from "@react-navigation/native";
+import { API_BASE_URL } from "../api/connect";
+
 
 
 export default function ProfileScreen() {
    const navigation = useNavigation();
   const {
     user,
+    authUser,
     loading,
     fullName,
     totalTickets,
@@ -32,8 +35,21 @@ export default function ProfileScreen() {
     handleLogout,
   } = useProfileViewModel();
 
+  const STATUS_COLORS = {
+    "EN LINEA": "#16a34a",
+    "AUSENTE": "#f59e0b",
+    "DESCONECTADO": "#6b7280",
+  };
+  useEffect(() => {
+  console.log("Render con estado:", authUser?.Estatus);
+}, [authUser?.Estatus]);
 
-
+  const getStatusBorderColor = (estatus = "") => {
+    const status = estatus.trim().toUpperCase();
+    return STATUS_COLORS[status] || "#6b7280";
+  }
+  
+{/*
   if (loading){
     return (
     <View style={{flex:1, justifyContent: "center", alignItems: "center"}}>
@@ -41,9 +57,18 @@ export default function ProfileScreen() {
     </View>
     );
   }
-  if (!user) return null;
+    */}
+  if (!user) return (
+    <View style={{flex:1, justifyContent: "center", alignItems: "center"}}>
+      <ActivityIndicator size="large" color="#3b82f6"></ActivityIndicator>
+    </View>
+  )
+console.log("FOTO:", user.Fotografia);
+console.log("URL FINAL:", `${API_BASE_URL}${user.Fotografia}`);
 
   return (
+
+
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="default" />
       
@@ -61,13 +86,17 @@ export default function ProfileScreen() {
             <TouchableOpacity onPress={handleUpdatePhoto}>
               {loading ? (
                 <ActivityIndicator size="large" color="#3b82f6" />
-              ) : user.foto ? (
-                <Image source={{ uri: user.foto }} style={styles.avatar} />
+              ) : user.Fotografia ? (
+              <Image source={{ uri: `${API_BASE_URL}${user.Fotografia}` }} style={[styles.avatar, {borderColor: getStatusBorderColor(authUser?.Estatus)}]} />
               ) : (
-                <View style={styles.avatarPlaceholder}>
+                <View style={[styles.avatarPlaceholder, {borderColor: getStatusBorderColor(authUser?.Estatus)}]}>
                   <Ionicons name="person" size={40} color="#fff" />
                 </View>
               )}
+
+              {/*
+              <View style={[styles.statusCircle, styles[statusStyleName]]}> </View>
+              */}
 
               <View style={styles.cameraIconContainer}>
                 <Ionicons name="camera" size={24} color="#fff" />
@@ -98,7 +127,7 @@ export default function ProfileScreen() {
 
                 <View style={styles.infoRow}>
                   <Ionicons name="mail-outline" size={20} color="#f59e0b" style={styles.infoIcon} />
-                  <Text style={styles.infoText}>{user.Correo}</Text>
+                  <Text style={styles.infoText} numberOfLines={1} ellipsizeMode="tail">{user.Correo}</Text>
                 </View>
               </View>
 
@@ -114,18 +143,18 @@ export default function ProfileScreen() {
                 <View style={styles.statBox}>
                   <Ionicons name="clipboard" size={24} color="#0076A7" />
                   <Text style={styles.statLabel}>Asignados</Text>
-                  <Text style={styles.statValue}>222222222225</Text>
+                  <Text style={styles.statValue} numberOfLines={1} ellipsizeMode="tail">222222222225</Text>
                 </View>
                 <View style={styles.statBox}>
                   <Ionicons name="checkmark-done" size={24} color="#16a34a" />
                   <Text style={styles.statLabel}>Atendidos</Text>
-                  <Text style={styles.statValue}>3</Text>
+                  <Text style={styles.statValue} numberOfLines={1} ellipsizeMode="tail">3</Text>
 
                 </View>
                 <View style={styles.statBox}>
                   <Ionicons name="podium" size={24} color="#f59e0b" />
                   <Text style={styles.statLabel}>Total</Text>
-                  <Text style={styles.statValue}>{totalTickets}</Text>
+                  <Text style={styles.statValue} numberOfLines={1} ellipsizeMode="tail">{totalTickets}</Text>
                 </View>
               </View>
             </View>

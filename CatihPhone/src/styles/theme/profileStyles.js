@@ -8,7 +8,7 @@ const profileStyles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 22,
+    marginTop: 5,
   },
   scrollContent: {
     padding: 20,
@@ -32,7 +32,7 @@ const profileStyles = StyleSheet.create({
     height: 110,
     borderRadius: 55,
     borderWidth: 5,
-    borderColor: "#16a34a",
+    //borderColor: "#16a34a",
     elevation: 2
   },
    avatarPlaceholder: {
@@ -43,7 +43,7 @@ const profileStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 5,
-    borderColor: "#16a34a",
+    //borderColor: "#16a34a",
     elevation: 2
   },
   cameraIconContainer: {
@@ -92,10 +92,6 @@ const profileStyles = StyleSheet.create({
     color: "#000",
     marginBottom: 10,
   },
-  infoText: {
-    color: "#000",
-    marginBottom: 5,
-  },
   permissionItem: {
     color: "#000",
     marginBottom: 4,
@@ -131,7 +127,7 @@ statLabel: {
   marginTop: 5,
 },
 statValue: {
-  fontSize: 18,
+  fontSize: 16,
   fontWeight: "bold",
   color: "#111827",
   marginTop: 3,
@@ -147,16 +143,17 @@ cardInformacion: {
 infoRow: {
   flexDirection: "row",
   alignItems: "center",
-  marginBottom: 8,
+  marginBottom: 12,
 },
 infoIcon: {
   marginRight: 10,
 },
 infoText: {
   fontSize: 12,
-  color: "#111827",
   flex: 1,
   textAlign: "left",
+  color: "#000",
+  marginBottom: 5,
 },
 logout: {
         flexDirection: "row",
@@ -170,6 +167,16 @@ logout: {
         fontWeight: "600",
         color: "#FF4D4F",
     },
+    statusCircle: {
+      position: "absolute",
+      bottom: 5,
+      right: 5,
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      borderWidth: 2,
+      borderColor: "#fff",
+    }
 });
 
 export default profileStyles;

@@ -2,12 +2,14 @@ import { View,Text, TouchableOpacity, Modal, Image, Animated, Dimensions } from 
 import React, {useEffect, useRef} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useAuth } from "../hooks/useAuth";
 import styles from "../styles/theme/userMenuStyles";
 import { useNavigation } from "@react-navigation/native";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { API_BASE_URL } from "../api/connect";
 
 export default function UserMenuModal({ visible, onClose, onPerfil, onPassword, onLogout }) {
-  const { user } = useAuth();
+  const {user} = useContext(AuthContext);
   const screenWidth = Dimensions.get("window").width;
   const slideAnim = useRef(new Animated.Value(screenWidth)).current;
   const navigation = useNavigation();
@@ -38,21 +40,21 @@ export default function UserMenuModal({ visible, onClose, onPerfil, onPassword, 
        
 
           <View style={styles.userSeccion}>
-            {user?.foto ? (
-              <Image
-                source={{ uri: user.foto }}
-                style={styles.avatar}
-              />
-            ) : (
-              <View style={styles.avatarFallback}>
-                <Text style={styles.initial}>
-                  {user?.nombre?.charAt(0)?.toUpperCase() || "U"}
-                </Text>
-              </View>
-            )}
+            {user?.Fotografia ? (
+                <Image
+                  source={{
+                    uri: `${API_BASE_URL}${user.Fotografia}?t=${Date.now()}`,
+                  }}
+                  style={styles.avatar}
+                />
+              ) : (
+                <View style={styles.avatarFallback}>
+                  <Icon name="person" size={28} color="#0076A7" />
+                </View>
+              )}
 
             <Text style={styles.userName}>
-              {user?.nombre || "Usuario"}
+              {user?.Usuario || "Usuario"}
             </Text>
 
             <Text style={styles.userEmail}>

@@ -4,6 +4,7 @@ import * as SecureStore from "expo-secure-store";
 const BASE_URLS = {
   produccion: "http://192.168.44.179:3003"
 };
+export const API_BASE_URL = BASE_URLS.produccion;
 
 const api = axios.create({
   baseURL: BASE_URLS.produccion,

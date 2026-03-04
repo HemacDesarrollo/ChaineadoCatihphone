@@ -6,14 +6,16 @@ import styles from "../styles/theme/puntosStyles";
 import UserMenuModal from "../components/userMenuModals";
 import usePuntosConexionViewModel from "../viewmodels/usePuntosConexionViewModel";
 import useUserMenuViewModel from "../viewmodels/useUserMenuViewModel";
-import { useAuth } from "../hooks/useAuth";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import UserAvatar from "../components/UserAvatar";
 
 
 export default function PuntosConexionScreen() {
 
   const vm = usePuntosConexionViewModel();
   const userMenu = useUserMenuViewModel();
-  const {user} = useAuth();
+  const {user} = useContext(AuthContext);
 
   const renderItem = ({ item }) => {
     if (vm.esTicket) {
@@ -34,6 +36,10 @@ export default function PuntosConexionScreen() {
           <Text style={styles.info}>Tipo de Reporte: (--)</Text>
           <Text style={styles.info}>Asignado a: (--)</Text>
           <Text style={styles.info}>Fecha de Creación: (--)</Text>
+          <Text style={styles.info}>Fecha de Termino: (--)</Text>
+          <Text style={styles.info}>Categoria: (--)</Text>
+          <Text style={styles.info}>Ticket Original: (--)</Text>
+
         </TouchableOpacity>
       );
     }
@@ -86,11 +92,9 @@ export default function PuntosConexionScreen() {
           </View>
           
           <View style={[styles.header, { width: 90 }]}>
-            <View style={styles.iconCards}>
-              <TouchableOpacity onPress={userMenu.abrirMenu}>
-                <Icon name="person" size={35} color="#000" />
+              <TouchableOpacity onPress={userMenu.abrirMenu} style={styles.iconCards}>
+                <UserAvatar />
               </TouchableOpacity>
-            </View>
           </View>
           
           

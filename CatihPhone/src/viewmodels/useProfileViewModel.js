@@ -1,12 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useAuth } from "../hooks/useAuth";
+import * as ImageManipulator from "expo-image-manipulator";
+import * as FileSystem from "expo-file-system";
 import { api } from "../api/connect";
+import { AuthContext } from "../context/AuthContext";
+
+
+
 
 export default function useProfileViewModel() {
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
-  const { user: authUser, logout } = useAuth();
+ const { user: authUser, logout, updateUserData } = useContext(AuthContext);
+ const [profileData, setProfileData] = useState(null);
 
 
   const stats = {
@@ -16,46 +22,49 @@ export default function useProfileViewModel() {
 
   const totalTickets = stats.asignados + stats.atendidos;
 
-  const fullName = user
-    ? `${user.Nombre ?? ""} ${user.Apellido ?? ""}`
-    : "";
+  const fullName = profileData
+  ? `${profileData.Nombre ?? ""} ${profileData.Apellido ?? ""}`
+  : "";
 
-  useEffect(() => {
-  if (!authUser) return;
+useEffect(() => {
+    if (!authUser) return;
 
-  const fetchUserData = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/APP/usuarios/me");
-      setUser(response.data);
-    } catch (error) {
-      console.log("Error trayendo usuario:", error);
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get("/APP/usuarios/me");
+        setProfileData(response.data);
 
-      if (error.response?.status === 401) {
-        logout();
+      } catch (error) {
+        console.log("Error trayendo usuario:", error);
+
+        if (error.response?.status === 401) {
+          
+          logout();
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchUserData();
-}, [authUser]);
-
+    fetchUserData();
+  }, [authUser]);
 
 
   const getStatusStyleName = () => {
-    if (!user) return "statusAway";
+  if (!authUser) return "statusAway";
 
-    switch (user.Estatus) {
-      case "EN LÍNEA":
-        return "statusOnline";
-      case "OCUPADO":
-        return "statusBusy";
-      default:
-        return "statusAway";
-    }
-  };
+  switch (authUser.Estatus) {
+    case "EN LINEA":
+      return "statusOnline";
+    case "AUSENTE":
+      return "statusAway";
+    case "DESCONECTADO":
+      return "statusOffline";
+    default:
+      return "statusAway";
+  }
+};
 
   const handleUpdatePhoto = async () => {
     try {
@@ -68,29 +77,88 @@ export default function useProfileViewModel() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.8,
+        quality: 0.5,
       });
 
       if (!result.canceled) {
-        setUser((prev) => ({
-          ...prev,
-          foto: result.assets[0].uri,
-        }));
+        const image = result.assets[0];
+
+        const compressedImage = await ImageManipulator.manipulateAsync(
+          image.uri,
+          [
+            {resize: {width: 300}}
+          ],
+          {
+            compress: 0.5,
+            format: ImageManipulator.SaveFormat.JPEG,
+          }
+          
+        );
+        const fileInfo = await FileSystem.getInfoAsync(compressedImage.uri);
+        console.log("PESO FINAL:", fileInfo.size);
+        console.log("DIMENSIONES FINALES:", compressedImage.width, compressedImage.height);
+
+        //console.log("IMAGE ASSET COMPLETO:", image);
+        //console.log("URI:", image.uri);
+        //console.log("IMAGE:", image);
+
+
+        const formData = new FormData();
+        formData.append("foto", {
+          uri: compressedImage.uri,
+          name: `profile_${Date.now()}.jpg`,
+          type: "image/jpeg",
+        });
+
+        setLoading(true);
+
+        const response = await api.put(
+          "/APP/usuarios/foto",
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            transformRequest: (data) => data,
+          }
+        );
+
+
+
+        setProfileData(response.data);
+        updateUserData(response.data);
       }
     } catch (error) {
-      console.log("Error seleccionando foto:", error);
+      console.error("ERROR COMPLETO:", error);
+  Alert.alert(
+    "Error",
+    "No se pudo actualizar la foto. Intenta nuevamente mas tarde."
+  );
+    }finally{
+      setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    logout();
-  };
+const handleLogout = () => {
+  Alert.alert(
+    "Cerrar sesión",
+    "¿Deseas salir de tu cuenta?",
+    [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Salir", style: "destructive", onPress: async () => {
+        logout();
+      } }
+    ]
+  );
+};
+
 
   return {
-    user,
+    user: profileData,
+    authUser,
     loading,
     fullName,
     stats,

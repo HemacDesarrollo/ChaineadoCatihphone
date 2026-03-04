@@ -36,6 +36,7 @@ const puntosStyles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 10,
     marginTop: 25,
+    overflow: "hidden"
   },
   header: {
     height: 90,

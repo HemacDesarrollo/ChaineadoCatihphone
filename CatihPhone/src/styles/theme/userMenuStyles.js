@@ -41,13 +41,10 @@ const userMenuStyles = StyleSheet.create({
         margin: 5
     },
     avatar:{
-        width: 45,
-        height: 45,
-        borderRadius: 22.5,
-        backgroundColor: "#0076A7",
-        justifyContent: "center",
-        alignItems: "center",
-        marginRight: 5,
+        width: 55,
+        height: 55,
+        borderRadius: 27.5,
+        resizeMode: "cover",
     },
     avatarText: {
         color: "#fff",
@@ -58,11 +55,10 @@ const userMenuStyles = StyleSheet.create({
     avatarFallback: {
         width: 55,
         height: 55,
-        borderRadius: 50,
-        backgroundColor: "#0076A7",
+        borderRadius: 27.5,
+        backgroundColor: "#E5E5E5",
         justifyContent: "center",
         alignItems: "center",
-        marginRight: 15,
     },
 
     initial: {
