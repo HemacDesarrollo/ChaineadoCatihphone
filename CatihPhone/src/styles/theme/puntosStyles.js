@@ -65,6 +65,7 @@ const puntosStyles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 20,
     margin: 12,
+    height: 50
   },
   cardMenu: {
     backgroundColor: "#2680B2",
@@ -76,8 +77,9 @@ const puntosStyles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 50,
+    height: 45,
     marginLeft: 10,
+    marginRight: 25,
     color: "#000",
   },
   filtroContainer: {
@@ -115,11 +117,17 @@ const puntosStyles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
-  card: {
-    backgroundColor: "#E5E5E5",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
+   card: {
+  borderRadius: 14,
+  padding: 16,
+  marginBottom: 14,
+  marginHorizontal: 4,
+
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 5,
+  elevation: 4
   },
   estadoBadge: {
     alignSelf: "flex-start",
@@ -150,10 +158,27 @@ const puntosStyles = StyleSheet.create({
     right: 20,
     top: 20,
     fontWeight: "bold",
+    fontSize: 18
+  },
+  infoValueContainer: {
+  flex: 1,
+  marginLeft: 5,
+},
+  infoRow:{
+  flexDirection:"row",
+  alignItems: "flex-start",
+  marginBottom:6,
   },
   info: {
-    marginBottom: 5,
     color: "#333",
+    fontWeight: "bold",
+    fontSize: 13,
+  },
+  infoBase: {
+    flex: 1,
+    color: "#535353ff",
+    fontSize: 13,
+    flexWrap: "wrap",
   },
   buttonContent: {
     flexDirection: "row",
@@ -189,9 +214,11 @@ const puntosStyles = StyleSheet.create({
   },
   TextResul: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 20,
-    marginTop: 12,
+    //alignItems: "center",
+    //alignContent: "flex-start",
+    justifyContent: "space-between",
+    marginBottom: 2,
+    marginHorizontal: 12,
   },
   emptyContainer: {
     flex: 1,
@@ -306,6 +333,10 @@ const puntosStyles = StyleSheet.create({
   statusAway: {
     backgroundColor: "#9ca3af",
   },
+  clearButton: {
+  position: "absolute",
+  right: 15,
+},
 });
 
 export default puntosStyles;

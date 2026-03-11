@@ -1,29 +1,33 @@
-import React, { useContext } from "react";
-import { View, Image } from "react-native";
+import React, { useContext, useMemo } from "react";
+import { Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
 import { API_BASE_URL } from "../api/connect";
 
-export default function UserAvatar() {
+function UserAvatar() {
+
   const { user } = useContext(AuthContext);
 
+  const imageUri = useMemo(() => {
+    if (!user?.Fotografia) return null;
+    return `${API_BASE_URL}${user.Fotografia}`;
+  }, [user?.Fotografia]);
 
-  if (!user?.Fotografia) {
-    return (
-      <Ionicons name="person" size={24} color="#0076A7" />
-    );
+  if (!imageUri) {
+    return <Ionicons name="person" size={24} color="#0076A7" />;
   }
 
   return (
     <Image
-      source={{
-        uri: `${API_BASE_URL}${user.Fotografia}?t=${Date.now()}`,
-      }}
+      source={{ uri: imageUri }}
       style={{
         width: "100%",
         height: "100%",
         resizeMode: "cover",
       }}
+      fadeDuration={0}
     />
   );
 }
+
+export default React.memo(UserAvatar);

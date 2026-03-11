@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from "react";
+import React, {useRef, useEffect, useMemo, useContext} from "react";
 import {
   View,
   Text,
@@ -18,6 +18,9 @@ import Icon from "react-native-vector-icons/Ionicons";
 import AppHeader from "../components/AppHeader";
 import { useNavigation } from "@react-navigation/native";
 import { API_BASE_URL } from "../api/connect";
+import UserAvatar from "../components/UserAvatar";
+import { status } from "../styles/theme/colors";
+import { AuthContext } from "../context/AuthContext";
 
 
 
@@ -35,20 +38,17 @@ export default function ProfileScreen() {
     handleLogout,
   } = useProfileViewModel();
 
-  const STATUS_COLORS = {
-    "EN LINEA": "#16a34a",
-    "AUSENTE": "#f59e0b",
-    "DESCONECTADO": "#6b7280",
-  };
-  useEffect(() => {
-  console.log("Render con estado:", authUser?.Estatus);
-}, [authUser?.Estatus]);
+  const { status } = useContext(AuthContext);
 
-  const getStatusBorderColor = (estatus = "") => {
-    const status = estatus.trim().toUpperCase();
-    return STATUS_COLORS[status] || "#6b7280";
-  }
-  
+const STATUS_COLORS = {
+  "EN LINEA": "#16a34a",
+  "AUSENTE": "#f59e0b",
+  "DESCONECTADO": "#6b7280",
+};
+
+const statusBorderColor = useMemo(() => {
+  return STATUS_COLORS[status] || "#6b7280";
+}, [status]);
 {/*
   if (loading){
     return (
@@ -58,13 +58,13 @@ export default function ProfileScreen() {
     );
   }
     */}
-  if (!user) return (
-    <View style={{flex:1, justifyContent: "center", alignItems: "center"}}>
-      <ActivityIndicator size="large" color="#3b82f6"></ActivityIndicator>
+if (loading) {
+  return (
+    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+      <ActivityIndicator size="large" color="#3b82f6" />
     </View>
-  )
-console.log("FOTO:", user.Fotografia);
-console.log("URL FINAL:", `${API_BASE_URL}${user.Fotografia}`);
+  );
+}
 
   return (
 
@@ -84,27 +84,18 @@ console.log("URL FINAL:", `${API_BASE_URL}${user.Fotografia}`);
           <View style={styles.card}>
             <View style={styles.avatarContainer}>
             <TouchableOpacity onPress={handleUpdatePhoto}>
-              {loading ? (
-                <ActivityIndicator size="large" color="#3b82f6" />
-              ) : user.Fotografia ? (
-              <Image source={{ uri: `${API_BASE_URL}${user.Fotografia}` }} style={[styles.avatar, {borderColor: getStatusBorderColor(authUser?.Estatus)}]} />
-              ) : (
-                <View style={[styles.avatarPlaceholder, {borderColor: getStatusBorderColor(authUser?.Estatus)}]}>
-                  <Ionicons name="person" size={40} color="#fff" />
-                </View>
-              )}
-
-              {/*
-              <View style={[styles.statusCircle, styles[statusStyleName]]}> </View>
-              */}
-
-              <View style={styles.cameraIconContainer}>
-                <Ionicons name="camera" size={24} color="#fff" />
+              
+              <View style={[styles.avatar, { borderColor: statusBorderColor, overflow: "hidden" }]}>
+                <UserAvatar  size={35} />
               </View>
+
+            <View style={styles.cameraIconContainer}>
+              <Ionicons name="camera" size={24} color="#fff" />
+            </View>
             </TouchableOpacity>
           </View>
 
-            <Text style={styles.name}>{user.Usuario}</Text>
+            <Text style={styles.name}>{user?.Usuario}</Text>
 
 
              <View style={styles.cardInformacion}>
@@ -112,22 +103,22 @@ console.log("URL FINAL:", `${API_BASE_URL}${user.Fotografia}`);
 
                 <View style={styles.infoRow}>
                   <Icon name="person-outline" size={20} color="#00a79fff" style={styles.infoIcon} />
-                  <Text style={styles.infoText}>{user.Nombre} {user.Apellido}</Text>
+                  <Text style={styles.infoText}>{user?.Nombre} {user?.Apellido}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
                   <Ionicons name="briefcase-outline" size={20} color="#0076A7" style={styles.infoIcon} />
-                  <Text style={styles.infoText}>{user.Tipo_Usuario}</Text>
+                  <Text style={styles.infoText}>{user?.Tipo_Usuario}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
                   <Ionicons name="call-outline" size={20} color="#16a34a" style={styles.infoIcon} />
-                  <Text style={styles.infoText}>{user.telefono}</Text>
+                  <Text style={styles.infoText}>{user?.telefono}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
                   <Ionicons name="mail-outline" size={20} color="#f59e0b" style={styles.infoIcon} />
-                  <Text style={styles.infoText} numberOfLines={1} ellipsizeMode="tail">{user.Correo}</Text>
+                  <Text style={styles.infoText} numberOfLines={1} ellipsizeMode="tail">{user?.Correo}</Text>
                 </View>
               </View>
 

@@ -7,6 +7,7 @@ import HomeScreen from "../screens/HomeScreen";
 import PuntosConexionScreen from "../screens/PuntosConexionScreen";
 import RecuperarPasswordScreen from "../screens/RecuperarPasswordScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import BottomMenu from "../components/BottonMenu";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ return (
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="PuntosConexion" component={PuntosConexionScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen}/>
+        <Stack.Screen name="BottomMenu" component={BottomMenu} />
       </>
     ) : (
       <>

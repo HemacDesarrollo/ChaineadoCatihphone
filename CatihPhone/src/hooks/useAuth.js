@@ -7,33 +7,37 @@ import { api } from "../api/connect";
 export function useAuth() {
 
   const [user, setUser] = useState(null);
+  const [status, setStatus] = useState("EN LINEA");
   const [loading, setLoading] = useState(true);
   const [sesionExpired, setSesionExpired] = useState(false);
 
+  const userRef = useRef(user);
+  const statusRef = useRef(status);
+
   const logoutTimer = useRef(null);
   const inactivityTimer = useRef(null);
+  const lastInteraction = useRef(0);
 
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
-  const updateUserStatus = (estatus) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      return { ...prev, Estatus: estatus };
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
+
+  const updateStatus = (newStatus) => {
+    setStatus((prev) => {
+      if (prev === newStatus) return prev;
+      return newStatus;
     });
   };
-
-  const updateUserData = (data) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      return { ...prev, ...data };
-    });
-  };
-
 
   const setOnline = async () => {
-    if (!user) return;
-    if (user.Estatus === "EN LINEA") return;
+    if (!userRef.current) return;
+    if (statusRef.current === "EN LINEA") return;
 
-    updateUserStatus("EN LINEA");
+    updateStatus("EN LINEA");
 
     try {
       await api.put("/APP/usuarios/estatus", {
@@ -42,12 +46,11 @@ export function useAuth() {
     } catch {}
   };
 
-
   const setAway = async () => {
-    if (!user) return;
-    if (user.Estatus === "AUSENTE") return;
+    if (!userRef.current) return;
+    if (statusRef.current === "AUSENTE") return;
 
-    updateUserStatus("AUSENTE");
+    updateStatus("AUSENTE");
 
     try {
       await api.put("/APP/usuarios/estatus", {
@@ -56,43 +59,38 @@ export function useAuth() {
     } catch {}
   };
 
-
   const resetInactivityTimer = () => {
     if (inactivityTimer.current) {
       clearTimeout(inactivityTimer.current);
     }
 
     inactivityTimer.current = setTimeout(() => {
-      setAway();
+      if (statusRef.current === "EN LINEA") {
+        setAway();
+      }
     }, 60000);
   };
 
+  const registerInteraction = () => {
 
- const lastInteraction = useRef(0);
+    const now = Date.now();
 
-const registerInteraction = () => {
+    if (now - lastInteraction.current < 1500) return;
 
-  const now = Date.now();
+    lastInteraction.current = now;
 
-  if (now - lastInteraction.current < 1500) return;
+    if (!userRef.current) return;
 
-  lastInteraction.current = now;
+    resetInactivityTimer();
 
-  if (!user) return;
-
-  if (user.Estatus === "AUSENTE") {
-    setOnline();
-  }
-
-  resetInactivityTimer();
-};
-
+    if (statusRef.current !== "EN LINEA") {
+      setOnline();
+    }
+  };
 
   useEffect(() => {
 
     global.__REGISTER_INTERACTION__ = registerInteraction;
-
-    resetInactivityTimer();
 
     return () => {
       global.__REGISTER_INTERACTION__ = null;
@@ -102,25 +100,34 @@ const registerInteraction = () => {
       }
     };
 
-  }, [user]);
-
+  }, []);
 
   useEffect(() => {
 
-    const subscription = AppState.addEventListener("change", (state) => {
+    const subscription = AppState.addEventListener("change", async (state) => {
 
       if (state === "active") {
-        registerInteraction();
+          const token = await SecureStore.getItemAsync("CATI_token");
+
+          if (token) {
+            const decoded = jwtDecode(token);
+            const now = Math.floor(Date.now() / 1000);
+
+            if (decoded.exp <= now) {
+              await clearSession(true);
+              return;
+            }
+          }
+          registerInteraction();
       } else {
         setAway();
       }
-
+ 
     });
 
     return () => subscription.remove();
 
-  }, [user]);
-
+  }, []);
 
   const loginUser = async (token) => {
 
@@ -133,8 +140,9 @@ const registerInteraction = () => {
       token,
       ...decoded,
       ...response.data,
-      Estatus: "EN LINEA",
     });
+
+    updateStatus("EN LINEA");
 
     try {
       await api.put("/APP/usuarios/estatus", {
@@ -144,9 +152,14 @@ const registerInteraction = () => {
 
     scheduleAutoLogout(token);
     resetInactivityTimer();
-
   };
 
+  const updateUserData = (data) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      return { ...prev, ...data };
+    });
+  };
 
   const clearSession = async (expired = false) => {
 
@@ -164,25 +177,21 @@ const registerInteraction = () => {
       await api.put("/APP/usuarios/estatus", {
         Estatus: "DESCONECTADO"
       });
-    } catch {
-      console.log("No se pudo marcar como DESCONECTADO");
-    }
+    } catch {}
 
     await SecureStore.deleteItemAsync("CATI_token");
 
     setUser(null);
+    setStatus("DESCONECTADO");
 
     if (expired) {
       setSesionExpired(true);
     }
-
   };
-
 
   const logout = async () => {
     await clearSession(false);
   };
-
 
   const scheduleAutoLogout = (token) => {
 
@@ -203,9 +212,7 @@ const registerInteraction = () => {
     logoutTimer.current = setTimeout(() => {
       clearSession(true);
     }, timeUntilExpire * 1000);
-
   };
-
 
   useEffect(() => {
 
@@ -216,7 +223,10 @@ const registerInteraction = () => {
         const token = await SecureStore.getItemAsync("CATI_token");
 
         if (!token) {
+
           setUser(null);
+          setStatus("DESCONECTADO");
+
         } else {
 
           const decoded = jwtDecode(token);
@@ -236,11 +246,11 @@ const registerInteraction = () => {
               ...response.data,
             });
 
+            updateStatus("EN LINEA");
+
             scheduleAutoLogout(token);
             resetInactivityTimer();
-
           }
-
         }
 
       } catch {
@@ -252,13 +262,11 @@ const registerInteraction = () => {
         setLoading(false);
 
       }
-
     };
 
     restoreSession();
 
   }, []);
-
 
   useEffect(() => {
 
@@ -266,12 +274,12 @@ const registerInteraction = () => {
       (response) => response,
       async (error) => {
 
-        const status = error.response?.status;
+        const statusCode = error.response?.status;
         const url = error.config?.url;
 
         if (
-          user &&
-          (status === 401 || status === 403) &&
+          userRef.current &&
+          (statusCode === 401 || statusCode === 403) &&
           url &&
           !url.includes("/auth/login")
         ) {
@@ -279,25 +287,22 @@ const registerInteraction = () => {
         }
 
         return Promise.reject(error);
-
       }
     );
 
     return () => api.interceptors.response.eject(interceptor);
 
-  }, [user?.token]);
-
+  }, []);
 
   return {
     user,
+    status,
     loading,
     sesionExpired,
     setSesionExpired,
     loginUser,
     logout,
-    updateUserStatus,
-    updateUserData,
     registerInteraction,
+    updateUserData,
   };
-
 }

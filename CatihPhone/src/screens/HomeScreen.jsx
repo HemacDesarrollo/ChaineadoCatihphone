@@ -17,7 +17,7 @@ export default function HomeScreen({ navigation }) {
       <SafeAreaView style={homeStyles.safe}>
         <Text style={homeStyles.title}>CATIPHONE</Text>
         <Text style={homeStyles.subtitle}>
-          Bienvenido {user?.usuario}
+          Bienvenido {user?.Nombre}
         </Text>
 
         <MenuCard

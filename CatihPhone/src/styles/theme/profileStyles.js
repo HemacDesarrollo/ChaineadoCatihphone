@@ -176,7 +176,21 @@ logout: {
       borderRadius: 10,
       borderWidth: 2,
       borderColor: "#fff",
-    }
+    },
+    avatarBorder: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  avatarImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
 });
 
 export default profileStyles;
