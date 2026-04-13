@@ -4,10 +4,13 @@ import { AuthContext } from "../context/AuthContext";
 
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
-import PuntosConexionScreen from "../screens/PuntosConexionScreen";
+import MisTickestScreen from "../screens/MisTicketsScreen";
 import RecuperarPasswordScreen from "../screens/RecuperarPasswordScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import BottomMenu from "../components/BottonMenu";
+import DetalleTicketScreen from "../screens/DetalleTicketScreen";
+import RecientesScreen from "../screens/recientesScreen";
+import SitiosScreen from "../screens/SitiosScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,13 +20,16 @@ export default function AppNavigator() {
 if (loading) return null; 
 
 return (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "transparent" }, animation: "fade_from_bottom", }}>
     {user ? (
       <>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="PuntosConexion" component={PuntosConexionScreen} />
+        <Stack.Screen name="MisTickets" component={MisTickestScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen}/>
         <Stack.Screen name="BottomMenu" component={BottomMenu} />
+        <Stack.Screen name="DetalleTicket" component={DetalleTicketScreen} />
+        <Stack.Screen name="Recientes" component={RecientesScreen}/>
+        <Stack.Screen name="Sitios" component={SitiosScreen}/>
       </>
     ) : (
       <>

@@ -17,16 +17,32 @@ export default function BottomMenu({onOpenFilters}) {
         style={styles.button}
         onPress={() => navigation.navigate("Home")}
       >
-        <Icon name="home-outline" size={26} color="#fff" />
+        <Icon name="home-outline" size={20} color="#fff" />
         <Text style={styles.label}>Inicio</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("PuntosConexion")}
+        onPress={() => navigation.navigate("MisTickets")}
       >
-        <Icon name="location-outline" size={26} color="#fff" />
-        <Text style={styles.label}>  Puntos {"\n"} Conexión</Text>
+        <Icon name="ticket-outline" size={20} color="#fff" />
+        <Text style={[styles.label,{textAlign: "center"}]}>Mis {"\n"}Tickets</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Recientes")}
+      >
+        <Icon name="time-outline" size={20} color="#fff" />
+        <Text style={styles.label}>Recientes</Text>
+      </TouchableOpacity>
+
+        <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Sitios")}
+      >
+        <Icon name="location" size={20} color="#fff" />
+        <Text style={styles.label}>Sitios</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -40,6 +56,8 @@ export default function BottomMenu({onOpenFilters}) {
         <Text style={styles.label}>Perfil</Text>
       </TouchableOpacity>
 
+      
+
     </View>
   );
 }
@@ -52,26 +70,35 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 110,
-    backgroundColor: "#003B5C",
+    backgroundColor: "#1B4F8A",
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "space-around",
     alignItems: "center",
-    borderTopWidth: 1,
-    borderColor: "#003B5C"
+    borderTopWidth: 0,
+    borderColor: "#003B5C",
+    paddingVertical: 10
   },
 
   button: {
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent:"center",
+    flex: 1,
+    height: 60,
+    justifyContent: "space-between",
+    paddingVertical: 6
   },
   label: {
     fontSize: 12,
     color: "#fff",
-    marginTop: 2
+    marginTop: 4,
+    textAlign: "center",
+    lineHeight: 14,
+    height: 28,
   },
   ContenedorAvatar: {
-  width: 40,
-  height: 40,
-  borderRadius: 50,
+  width: 25,
+  height: 25,
+  borderRadius: 15,
   overflow: "hidden",
   backgroundColor: "#fff"
 },

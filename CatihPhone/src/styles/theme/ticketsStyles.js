@@ -43,7 +43,8 @@ const puntosStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    justifyContent: "space-between",
+    backgroundColor: "#1B4F8A",
+    justifyContent:"space-between"
   },
   headerTitle: {
     fontSize: 22,
@@ -60,12 +61,12 @@ const puntosStyles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#E5E5E5",
+    backgroundColor: "#F0F4F8",
     borderRadius: 30,
     paddingHorizontal: 15,
     marginBottom: 20,
     margin: 12,
-    height: 50
+    height: 45
   },
   cardMenu: {
     backgroundColor: "#2680B2",
@@ -119,20 +120,21 @@ const puntosStyles = StyleSheet.create({
   },
    card: {
   borderRadius: 14,
+  borderColor: '#000',
+  borderWidth: 0.8,
   padding: 16,
   marginBottom: 14,
-  marginHorizontal: 4,
+  marginHorizontal: 1,
 
   shadowColor: "#000",
   shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.15,
-  shadowRadius: 5,
-  elevation: 4
+  shadowOpacity: 1.15,
+  shadowRadius: 12,
+  elevation: 8
   },
   estadoBadge: {
     alignSelf: "flex-start",
     paddingHorizontal: 12,
-    paddingVertical: 5,
     borderRadius: 15,
     marginBottom: 10,
   },
@@ -156,7 +158,7 @@ const puntosStyles = StyleSheet.create({
   codigo: {
     position: "absolute",
     right: 20,
-    top: 20,
+    top: 12,
     fontWeight: "bold",
     fontSize: 18
   },
@@ -167,7 +169,7 @@ const puntosStyles = StyleSheet.create({
   infoRow:{
   flexDirection:"row",
   alignItems: "flex-start",
-  marginBottom:6,
+  marginBottom: 2,
   },
   info: {
     color: "#333",
@@ -175,10 +177,21 @@ const puntosStyles = StyleSheet.create({
     fontSize: 13,
   },
   infoBase: {
-    flex: 1,
-    color: "#535353ff",
+    //flex: 1,
+    color: "#000",
     fontSize: 13,
     flexWrap: "wrap",
+  },
+  infoBien: {
+    flex: 1,
+    color: "#000",
+    fontSize: 13,
+    flexWrap: "wrap",
+  },
+  linea: {
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
+    marginVertical: 10,
   },
   buttonContent: {
     flexDirection: "row",
@@ -337,6 +350,24 @@ const puntosStyles = StyleSheet.create({
   position: "absolute",
   right: 15,
 },
+  contHeader: {
+    justifyContent:"center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 22
+  },
+
+  fondoIcono: {
+    backgroundColor: "#2176AE",
+    height: 36,
+    width: 36,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 22,
+  }
 });
+
+
 
 export default puntosStyles;

@@ -1,54 +1,60 @@
-import React, {useState} from "react";
-import {View, TextInput, StyleSheet, TouchableOpacity} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { View, TextInput, TouchableOpacity } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function InputField({
-    icon,
-    placeholder,
-    value,
-    onChangeText,
-    secure = false,
-    theme = {card: "#fff", border: "#ccc", textColor: "#000"},
+  icon,
+  placeholder,
+  value,
+  onChangeText,
+  secure,
+  theme
 }) {
-    const [show, setShow] = useState (!secure);
+  const [showPassword, setShowPassword] = useState(false);
+    
+  return (
+    <View style={{
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.card, 
+      color: theme.textTitle,
+      borderColor: "#fff",
+      borderWidth: 1,
+      borderRadius: 30,
+      padding: 10,
+      marginBottom: 10
+    }}>
 
-    return (
-        <View style={[styles.container, {backgroundColor: theme.card, borderColor: theme.border}]}>
-        <Ionicons name={icon} size={22} color="#aaa"/>
-        <TextInput 
-            style={[styles.input, {color: theme.textColor}]}
-            placeholder={placeholder}
-            placeholderTextColor ="#aaa"
-            value={value}
-            onChangeText={onChangeText}
-            secureTextEntry={secure && show}
-        />
-        {secure && (
-            <TouchableOpacity onPress={() => setShow(!show)}>
-                <Ionicons name={show ? "eye-off-outline" : "eye-outline"}
-                size={22}
-                color={"aaa"}
-                />
-            </TouchableOpacity>
-        )}
+      <Icon 
+        name={icon} 
+        size={20} 
+        color={theme.icon}  
+      />
+
+      <TextInput
+        style={{
+          flex: 1,
+          marginLeft: 10,
+          color: theme.text   
+        }}
+        placeholder={placeholder}
+        placeholderTextColor={theme.text} 
+        value={value}
+        onChangeText={onChangeText}
+        secureTextEntry={secure && !showPassword}
+      />
+
+      {secure && (
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Icon
+            name={showPassword ? "eye-outline" : "eye-off-outline"}
+            size={20}
+            color={theme.icon}
+          />
+        </TouchableOpacity>
+      )}
+
     </View>
-    );
+  );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flexDirection: "row",
-        alignItems: "center",
-        borderRadius: 50,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        margin: 6,
-    },
-    input: {
-        flex: 1,
-        marginLeft: 10,
-        fontSize: 16,
-        marginTop: 6,
-        borderRaius: 150,
-    },
-})

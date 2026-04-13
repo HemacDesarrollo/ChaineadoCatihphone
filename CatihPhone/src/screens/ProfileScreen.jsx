@@ -1,10 +1,8 @@
-import React, {useRef, useEffect, useMemo, useContext} from "react";
+import React, { useMemo, useContext } from "react";
 import {
   View,
   Text,
-  Image,
   ScrollView,
-  StyleSheet,
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
@@ -13,162 +11,259 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import useProfileViewModel from "../viewmodels/useProfileViewModel";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "../styles/theme/profileStyles";
 import Icon from "react-native-vector-icons/Ionicons";
 import AppHeader from "../components/AppHeader";
 import { useNavigation } from "@react-navigation/native";
-import { API_BASE_URL } from "../api/connect";
 import UserAvatar from "../components/UserAvatar";
-import { status } from "../styles/theme/colors";
 import { AuthContext } from "../context/AuthContext";
-
-
+import { useTheme } from "../theme/ThemeContext";
 
 export default function ProfileScreen() {
-   const navigation = useNavigation();
+  const navigation = useNavigation();
+  const { theme, isDark } = useTheme();
+
   const {
     user,
-    authUser,
     loading,
-    fullName,
     totalTickets,
     stats,
-    statusStyleName,
     handleUpdatePhoto,
     handleLogout,
   } = useProfileViewModel();
 
   const { status } = useContext(AuthContext);
 
-const STATUS_COLORS = {
-  "EN LINEA": "#16a34a",
-  "AUSENTE": "#f59e0b",
-  "DESCONECTADO": "#6b7280",
-};
+  const STATUS_COLORS = {
+    "EN LINEA": "#16a34a",
+    AUSENTE: "#f59e0b",
+    DESCONECTADO: "#6b7280",
+  };
 
-const statusBorderColor = useMemo(() => {
-  return STATUS_COLORS[status] || "#6b7280";
-}, [status]);
-{/*
-  if (loading){
+  const statusBorderColor = useMemo(() => {
+    return STATUS_COLORS[status] || "#6b7280";
+  }, [status]);
+
+  if (loading) {
     return (
-    <View style={{flex:1, justifyContent: "center", alignItems: "center"}}>
-      <ActivityIndicator size="large" color="#3b82f6"/>
-    </View>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#3b82f6" />
+      </View>
     );
   }
-    */}
-if (loading) {
-  return (
-    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-      <ActivityIndicator size="large" color="#3b82f6" />
-    </View>
-  );
-}
 
   return (
-
-
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="default" />
-      
-      <AppHeader title="Perfil" onBack={() => navigation.goBack()} rightIcon="log-out-outline" onRightPress={handleLogout}/>
 
-      
+      <AppHeader
+        title="Perfil"
+        onBack={() => navigation.goBack()}
+        onNotificationPress={handleLogout}
+      />
+
       <LinearGradient
-        colors={["#0076A7", "#003B5C"]}
-        style={styles.container}
+        colors={
+          isDark
+            ? ["#0F172A", "#1E293B"]
+            : ["#2176AE", "#F0F4F8"]
+        }
+        style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          
-          <View style={styles.card}>
-            <View style={styles.avatarContainer}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
+
+          <View style={styles.profileCard}>
             <TouchableOpacity onPress={handleUpdatePhoto}>
               
-              <View style={[styles.avatar, { borderColor: statusBorderColor, overflow: "hidden" }]}>
-                <UserAvatar  size={35} />
+              <View style={[styles.avatarBig, { borderColor: statusBorderColor }]}>
+                <UserAvatar size={60} />
               </View>
 
-            <View style={styles.cameraIconContainer}>
-              <Ionicons name="camera" size={24} color="#fff" />
-            </View>
+              <View style={styles.cameraIcon}>
+                <Ionicons name="camera" size={18} color="#fff" />
+              </View>
+
             </TouchableOpacity>
-          </View>
 
-            <Text style={styles.name}>{user?.Usuario}</Text>
+            <Text style={[styles.name, { color: theme.textTitle }]}>{user?.Usuario}</Text>
 
-
-             <View style={styles.cardInformacion}>
-                <Text style={styles.sectionTitle}>Información</Text>
-
-                <View style={styles.infoRow}>
-                  <Icon name="person-outline" size={20} color="#00a79fff" style={styles.infoIcon} />
-                  <Text style={styles.infoText}>{user?.Nombre} {user?.Apellido}</Text>
-                </View>
-
-                <View style={styles.infoRow}>
-                  <Ionicons name="briefcase-outline" size={20} color="#0076A7" style={styles.infoIcon} />
-                  <Text style={styles.infoText}>{user?.Tipo_Usuario}</Text>
-                </View>
-
-                <View style={styles.infoRow}>
-                  <Ionicons name="call-outline" size={20} color="#16a34a" style={styles.infoIcon} />
-                  <Text style={styles.infoText}>{user?.telefono}</Text>
-                </View>
-
-                <View style={styles.infoRow}>
-                  <Ionicons name="mail-outline" size={20} color="#f59e0b" style={styles.infoIcon} />
-                  <Text style={styles.infoText} numberOfLines={1} ellipsizeMode="tail">{user?.Correo}</Text>
-                </View>
-              </View>
+            <Text style={[styles.subText, {color: theme.textTitle}]}>
+              {user?.Tipo_Usuario}
+            </Text>
 
 
-            {/*
-            <View style={[styles.statusBadge, styles[statusStyleName]]}>
-              <Text style={styles.statusText}>{user.status}</Text>
-            </View>
-            */}
-            <View style={styles.card}>
-              <Text style={styles.sectionTitle}>Estadísticas</Text>
-              <View style={styles.statsRow}>
-                <View style={styles.statBox}>
-                  <Ionicons name="clipboard" size={24} color="#0076A7" />
-                  <Text style={styles.statLabel}>Asignados</Text>
-                  <Text style={styles.statValue} numberOfLines={1} ellipsizeMode="tail">222222222225</Text>
-                </View>
-                <View style={styles.statBox}>
-                  <Ionicons name="checkmark-done" size={24} color="#16a34a" />
-                  <Text style={styles.statLabel}>Atendidos</Text>
-                  <Text style={styles.statValue} numberOfLines={1} ellipsizeMode="tail">3</Text>
-
-                </View>
-                <View style={styles.statBox}>
-                  <Ionicons name="podium" size={24} color="#f59e0b" />
-                  <Text style={styles.statLabel}>Total</Text>
-                  <Text style={styles.statValue} numberOfLines={1} ellipsizeMode="tail">{totalTickets}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-     
-          {/*
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>Permisos</Text>
-            {user.permisos.map((permiso, index) => (
-              <Text key={index} style={styles.permissionItem}>
-                 {permiso}
-              </Text>
-            ))}
-          </View>
-          */}
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutTexto}>Cerrar Sesión</Text>
-          </TouchableOpacity>
           
+          </View>
+
+
+          <View style={[styles.card, {backgroundColor: theme.card}]}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Información</Text>
+
+            <View style={styles.infoRow}>
+              <Icon name="person-outline" size={20} color="#00a79f"  />
+              <Text style={[styles.infoText, { color: theme.text }]}>
+                {user?.Nombre} {user?.Apellido}
+              </Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Icon name="briefcase-outline" size={20} color="#0076A7" />
+              <Text style={[styles.infoText, { color: theme.text }]}>
+                {user?.Tipo_Usuario}
+              </Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Icon name="call-outline" size={20} color="#16a34a" />
+              <Text style={[styles.infoText, { color: theme.text }]}>
+                {user?.telefono}
+              </Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Icon name="mail-outline" size={20} color="#f59e0b" />
+              <Text
+                style={[styles.infoText, { color: theme.text }]}
+                numberOfLines={1}
+              >
+                {user?.Correo}
+              </Text>
+            </View>
+          </View>
+
+          <View style={[styles.card, {backgroundColor: theme.card}]}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Estadísticas</Text>
+
+            <View style={styles.statsRow}>
+              <View style={styles.statBox}>
+                <Ionicons name="clipboard" size={22} color="#0076A7" />
+                <Text style={[styles.statValue, { color: theme.text }]}>{stats?.asignados || 0}</Text>
+                <Text style={[styles.statLabel, { color: theme.text }]}>Asignados</Text>
+              </View>
+
+              <View style={styles.statBox}>
+                <Ionicons name="checkmark-done" size={22} color="#16a34a" />
+                <Text style={[styles.statValue, { color: theme.text }]}>{stats?.atendidos || 0}</Text>
+                <Text style={[styles.statLabel, { color: theme.text }]}>Atendidos</Text>
+              </View>
+
+              <View style={styles.statBox}>
+                <Ionicons name="podium" size={22} color="#f59e0b" />
+                <Text style={[styles.statValue, { color: theme.text }]}>{totalTickets}</Text>
+                <Text style={[styles.statLabel, { color: theme.text }]}>Total</Text>
+              </View>
+            </View>
+          </View>
+
+ 
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Cerrar Sesión</Text>
+          </TouchableOpacity>
+
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>
   );
 }
 
+const styles = {
+  profileCard: {
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 20,
+  },
 
+  avatarBig: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 3,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    overflow: "hidden",
+  },
+
+  cameraIcon: {
+    position: "absolute",
+    bottom: -8,
+    alignSelf: "center",
+    backgroundColor: "#0076A7",
+    borderRadius: 20,
+    padding: 6,
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+
+  name: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 10,
+  },
+
+  subText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+
+  card: {
+    backgroundColor: "#fff",
+    marginHorizontal: 26,
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    borderColor: "#fff",
+    borderWidth: 1,
+    elevation: 3,
+  },
+
+  sectionTitle: {
+    fontWeight: "bold",
+    marginBottom: 10,
+    fontSize: 16,
+  },
+
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    gap: 10,
+  },
+
+  infoText: {
+    fontSize: 14,
+  },
+
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  statBox: {
+    flex: 1,
+    alignItems: "center",
+  },
+
+  statValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+
+  statLabel: {
+    fontSize: 12,
+    color: "#555",
+  },
+
+  logoutButton: {
+    backgroundColor: "#ef4444",
+    marginHorizontal: 26,
+    padding: 14,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  logoutText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+};

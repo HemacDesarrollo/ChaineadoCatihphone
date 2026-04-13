@@ -5,6 +5,7 @@ import { AuthProvider, AuthContext } from "./src/context/AuthContext";
 import AppNavigation from "./src/navigation/AppNavigator";
 import { enableScreens } from "react-native-screens";
 import { api } from "./src/api/connect";
+import { ThemeProvider } from "./src/theme/ThemeContext";
 
 enableScreens();
 
@@ -16,9 +17,11 @@ function RootApp() {
       style={{ flex: 1 }}
       onTouchStart={registerInteraction}
     >
+      <ThemeProvider>
       <NavigationContainer>
         <AppNavigation />
       </NavigationContainer>
+      </ThemeProvider>
     </View>
   );
 }

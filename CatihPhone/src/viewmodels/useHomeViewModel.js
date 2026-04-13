@@ -5,7 +5,7 @@ export default function useHomeViewModels(navigation) {
   const { user, logout } = useContext(AuthContext);
 
   const goToTickets = () => {
-    navigation.navigate("PuntosConexion",{
+    navigation.navigate("MisTickets",{
       menu: "Mis\nTickets"
   });
   };

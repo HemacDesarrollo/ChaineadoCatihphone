@@ -24,4 +24,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+import { Alert } from "react-native";
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+
+    if (error.response?.status === 401) {
+      console.log("TOKEN EXPIRADO O INVALIDO");
+
+      await SecureStore.deleteItemAsync("CATI_token");
+
+
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export { api };

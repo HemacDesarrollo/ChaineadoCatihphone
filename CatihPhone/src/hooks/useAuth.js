@@ -6,6 +6,7 @@ import { api } from "../api/connect";
 
 export function useAuth() {
 
+  const [filtrosTickets, setFiltrosTickets] = useState({});
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState("EN LINEA");
   const [loading, setLoading] = useState(true);
@@ -24,6 +25,7 @@ export function useAuth() {
 
   useEffect(() => {
     statusRef.current = status;
+
   }, [status]);
 
   const updateStatus = (newStatus) => {
@@ -183,6 +185,7 @@ export function useAuth() {
 
     setUser(null);
     setStatus("DESCONECTADO");
+    setFiltrosTickets({});
 
     if (expired) {
       setSesionExpired(true);
@@ -304,5 +307,7 @@ export function useAuth() {
     logout,
     registerInteraction,
     updateUserData,
+    filtrosTickets,
+    setFiltrosTickets,
   };
 }

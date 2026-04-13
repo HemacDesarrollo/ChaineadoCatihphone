@@ -1,25 +1,68 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import styles from "../styles/theme/headerStyles";
+import Icon from "react-native-vector-icons/Ionicons";
+import { useTheme } from "../theme/ThemeContext";
 
-export default function AppHeader({
-  title,
-  onBack,
-  rightIcon,
-  onRightPress,
-}) {
+export default function AppHeader({ title, titleComponent, onNotificationPress }) {
+  const { toggleTheme, isDark, theme } = useTheme();
+
   return (
-    <View style={styles.container}>
-      {onBack ? (
-        <TouchableOpacity onPress={onBack} style={styles.sideButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-      ) : (
-        <View style={styles.sideButton} />
+    <View
+      style={{
+        height: 90,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 20,
+        justifyContent: "space-between",
+        backgroundColor: theme.header,
+      }}
+    >
+      {titleComponent ? (
+        titleComponent
+      ) : ( <Text
+          style={{
+          fontSize: 22,
+          color: "#fff",
+          fontWeight: "bold",
+          marginTop: 25,
+        }}
+      >
+        {title}
+      </Text>
       )}
 
-      <Text style={styles.title}>{title}</Text>
+      <View style={{ flexDirection: "row", gap: 16 }}>
+
+
+        <TouchableOpacity onPress={toggleTheme}>
+          <View style={styles.iconBox}>
+            <Icon
+              name={isDark ? "moon" : "sunny"}
+              size={26}
+              color={isDark ? "#FFD700" : "#FFD700"}
+            />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={onNotificationPress}>
+          <View style={styles.iconBox}>
+            <Icon name="notifications" size={26} color="#fff" />
+          </View>
+        </TouchableOpacity>
+
+      </View>
     </View>
   );
 }
+
+const styles = {
+  iconBox: {
+    backgroundColor: "#2176AE",
+    height: 36,
+    width: 36,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 22,
+  },
+};
