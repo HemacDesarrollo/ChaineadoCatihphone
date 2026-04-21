@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
 import { obtenerRecientes } from "../utils/recientesStorage";
 import { api } from "../api/connect";
+import { obtenerSitiosRecientes } from "../utils/sitiosStorage";
 
 export const useRecientesViewModel = () => {
   const [recientes, setRecientes] = useState([]);
+  const [sitiosRecientes, setSitiosRecientes] = useState([]);
   const [proyectos, setProyectos] = useState([]); 
   const [loading, setLoading] = useState(true);
 
   const cargarRecientes = async () => {
-    setLoading(true);
-    const data = await obtenerRecientes();
-    setRecientes(data);
-    setLoading(false);
-  };
+  setLoading(true);
+
+  const tickets = await obtenerRecientes();
+  const sitios = await obtenerSitiosRecientes();
+
+  setRecientes(tickets);
+  setSitiosRecientes(sitios);
+
+  setLoading(false);
+};
 
   const cargarProyectos = async () => {
     try {
@@ -31,6 +38,7 @@ export const useRecientesViewModel = () => {
   return {
     recientes,
     proyectos,
+    sitiosRecientes,
     loading,
     cargarRecientes,
   };

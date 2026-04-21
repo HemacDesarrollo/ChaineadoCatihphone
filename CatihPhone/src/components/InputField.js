@@ -9,9 +9,10 @@ export default function InputField({
   value,
   onChangeText,
   secure,
-  theme
 }) {
   const [showPassword, setShowPassword] = useState(false);
+
+  const {theme} = useTheme();
     
   return (
     <View style={{

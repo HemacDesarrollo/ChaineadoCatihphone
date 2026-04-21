@@ -4,7 +4,11 @@ import { api } from "../api/connect";
 export function useSitiosViewModel() {
   const [sitios, setSitios] = useState([]); 
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [search, setSearchState] = useState("");
+
+const setSearch = (text) => {
+  setSearchState(typeof text === "string" ? text : "");
+};
 
   const cargarSitios = async () => {
     try {
@@ -12,7 +16,7 @@ export function useSitiosViewModel() {
 
       const res = await api.get("/APP/sitios/asignados");
 
-      console.log("DATA FINAL:", res?.data?.data);
+      //console.log("DATA FINAL:", res?.data?.data);
 
       const data = res?.data?.data ?? [];
 

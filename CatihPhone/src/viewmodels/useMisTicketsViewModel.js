@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect,useCallback } from "react";
+import { useState, useMemo, useEffect,useCallback, useRef} from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { api } from "../api/connect";
 
@@ -18,6 +18,7 @@ export default function usePuntosConexionViewModel() {
   const [menuSeleccionado, setMenuSeleccionado] = useState("Mis\nTickets")
   const [modalNuevoTicket, setModalNuevoTicket] = useState(false);
   const [menuPrevio, setMenuPrevio] = useState("Puntos de Conexión");
+  const filtrosPrevios = useRef(null);
 
   const [search, setSearch] = useState("");
   const [estadoSeleccionado, setEstadoSeleccionado] = useState(null);
@@ -35,6 +36,8 @@ export default function usePuntosConexionViewModel() {
   const [sitios, setSitios] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [tipoProblemaFiltros, setTipoProblemaFiltros] = useState([]);
+
+  
 
   const [proyectosFiltros, setProyectosFiltros] = useState({
   nombres: [],
@@ -169,6 +172,8 @@ async function cargarMunicipios(estado) {
   }
 }
 
+
+
 async function cargarEmpresas() {
   try {
 
@@ -212,6 +217,8 @@ async function cargarSitios() {
 
 
 async function cargarTickets({ pagina = 1, estado = estadoSeleccionado, idLabel = null, filtros = filtrosExtra } = {}) {
+  const start = Date.now();
+  setLoadingMore(true);
 
   try {
 
@@ -408,11 +415,22 @@ const totalPages = response?.data?.meta?.totalPages ?? 1;
 
 const totalCount = response?.data?.meta?.totalItems ?? 0;
 
+const elapsed = Date.now() - start;
+const MIN_TIME = 500; 
+
+if (elapsed < MIN_TIME) {
+  await new Promise(resolve =>
+    setTimeout(resolve, MIN_TIME - elapsed)
+  );
+}
+
 if (pagina === 1) {
   setTickets(nuevosTickets);
   setTotalTickets(totalCount);
 } else {
-  setTickets(prev => [...new Map ([...prev, ...nuevosTickets].map(t => [t.idTicket, t])).values()]);
+  setTickets(prev =>
+    [...new Map([...prev, ...nuevosTickets].map(t => [t.idTicket, t])).values()]
+  );
 }
 
 setPage(pagina);
@@ -483,17 +501,37 @@ if (!nuevosFiltros || Object.keys(nuevosFiltros).length === 0) {
 // }, [esTicket]);
  
 
-  useEffect(() => {
-
+useEffect(() => {
   if (!esTicket) return;
 
-  console.log("FILTROS EXTRA FINAL:", filtrosExtra);
+  if (JSON.stringify(filtrosPrevios.current) === JSON.stringify(filtrosExtra)) {
+    return;
+  }
+
+  filtrosPrevios.current = filtrosExtra;
+
+  setPage(1);
+  setTickets([]);
+  setHasMore(true);
+
   cargarTickets({
     pagina: 1,
     filtros: filtrosExtra
   });
 
 }, [filtrosExtra]);
+
+//   useEffect(() => {
+
+//   if (!esTicket) return;
+
+//   console.log("FILTROS EXTRA FINAL:", filtrosExtra);
+//   cargarTickets({
+//     pagina: 1,
+//     filtros: filtrosExtra
+//   });
+
+// }, [filtrosExtra]);
 
 
 

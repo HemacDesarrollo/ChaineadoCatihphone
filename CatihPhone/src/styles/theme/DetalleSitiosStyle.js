@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 
   statusBadge: {
     paddingHorizontal: 10,
-    paddingVertical: 2,
+    paddingVertical: 5,
     borderRadius: 8,
   },
 
@@ -54,12 +54,12 @@ const styles = StyleSheet.create({
 
   ticketId: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 18,
   },
 
   sectionTitle: {
     //fontWeight: "bold",
-    marginTop: 6,
+    marginTop: 15,
     marginBottom: 4,
     color: "#003B5C",
   },
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     height: 1,
     borderBottomWidth: 1,
     backgroundColor: "#000",
-    marginVertical: 6,
+    marginVertical: 12,
   },
   bottonText: {
     flexDirection: "row",
@@ -105,14 +105,14 @@ infoRow: {
 },
 
 description: {
-  marginTop: 2,
+  marginTop: 5,
   color: "#444",
 },
 
 buttonRow: {
   flexDirection: "row",
   justifyContent: "space-between",
-  marginTop: 6,
+  marginTop: 20,
 },
 
 btnPrimary: {
@@ -133,24 +133,6 @@ btnText: {
   color: "#fff",
   fontWeight: "bold",
 },
-
-cardImage: {
-    marginTop: 12,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 10,
-    elevation: 4, 
-  },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-  },
-  coords: {
-    marginTop: 6,
-    fontSize: 14,
-    color: "#555",
-  },
 
 });
 

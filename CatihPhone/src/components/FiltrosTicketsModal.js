@@ -38,21 +38,21 @@ export default function FiltrosTicketsModal({
 
   const construirFiltros = (filtros) => {
   return {
-    estatus: filtros.estatus,
+    estatus: filtros.estatus.length ? filtros.estatus : null,
 
-    empresa: filtros.empresa.map(e => e.idEmpresa),
+    empresa: filtros.empresa.length ? filtros.empresa.map(e => e.idEmpresa) : null,
 
-    categoria: filtros.categoria.map(c => c.idCategoria),
+    categoria: filtros.categoria.length ? filtros.categoria.map(c => c.idCategoria) : null,
 
-    tipoProblema: filtros.tipoProblema.map(t => t.Nombre_problema),
+    tipoProblema: filtros.tipoProblema.length ? filtros.tipoProblema.map(t => t.Nombre_problema) : null,
 
-    estado: filtros.estadoSitio.map(e => e.estado),
+    estado: filtros.estadoSitio.length ? filtros.estadoSitio.map(e => e.estado) : null,
 
-    municipio: filtros.municipioSitio.map(m => m.municipio),
+    municipio: filtros.municipioSitio.length ? filtros.municipioSitio.map(m => m.municipio) : null,
 
-    nombreProyecto: filtros.nombreProyecto.map(p => p.Nombre),
+    nombreProyecto: filtros.nombreProyecto.length ? filtros.nombreProyecto.map(p => p.Nombre) : null,
 
-    numContrato: filtros.numContrato.map(n => n.NumContrato),
+    numContrato: filtros.numContrato.length ? filtros.numContrato.map(n => n.NumContrato) : null,
 
     fechaDesde: filtros.fechaDesde,
     fechaHasta: filtros.fechaHasta,
@@ -354,32 +354,6 @@ const formatearFecha = (fecha) => {
         }
       />
 
-      {/* <SearchSelect
-        theme={theme}
-        isDark={isDark}
-        label="Fecha registro"
-        data={proyectosFiltros.fechasRegistro}
-        value={filtros.fechaRegistroProyecto}
-        keyField="Fecha_Registro"
-        labelField="Fecha_Registro"
-        onSelect={(val) =>
-          setFiltros({ ...filtros, fechaRegistroProyecto: val })
-        }
-      /> */}
-
-      <SearchSelect
-        theme={theme}
-        isDark={isDark}
-        label="Fecha fin"
-        data={proyectosFiltros.fechasFin}
-        value={filtros.fechaFinProyecto}
-        keyField="Fecha_Fin"
-        labelField="Fecha_Fin"
-        onSelect={(val) =>
-          setFiltros({ ...filtros, fechaFinProyecto: val })
-        }
-      />
-
     </View>
   );
 }
@@ -402,7 +376,7 @@ const formatearFecha = (fecha) => {
 
         onSelect={(estadosSeleccionados) => {
 
-  console.log("ESTADOS SELECCIONADOS:", estadosSeleccionados);
+  // console.log("ESTADOS SELECCIONADOS:", estadosSeleccionados);
 
   onSelectEstado && onSelectEstado(estadosSeleccionados[0]);
 
@@ -433,51 +407,6 @@ const formatearFecha = (fecha) => {
         onSelectMunicipio && onSelectMunicipio(municipiosSeleccionados[0]);
       }}
       />
-      
-
-      <Text style={{ fontWeight: "bold", marginTop: 20, color: isDark ? "#fff" : theme.text}}>
-        Fecha de registro
-      </Text>
-
-      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-        {[
-          { label: "Hoy", value: "HOY" },
-          { label: "7 días", value: "7_DIAS" },
-          { label: "Último mes", value: "30_DIAS" },
-          { label: "Año pasado", value: "ANIO_PASADO" },
-        ].map((item) => {
-          const activo = filtros.rangoRapido === item.value;
-
-          return (
-            <TouchableOpacity
-              key={item.value}
-              onPress={() => {
-                if (filtros.rangoRapido === item.value) {
-                setFiltros({
-                  ...filtros,
-                  rangoRapido: null,
-                  fechaDesde: null,
-                  fechaHasta: null,
-                });
-                } else {
-                    aplicarRangoRapido(item.value);
-                  }
-                }}
-                style={{
-                padding: 10,
-                margin: 5,
-                borderRadius: 20,
-                borderWidth: 1,
-                borderColor: activo ? "#e60023" : "#ccc",
-                backgroundColor: activo ? "#ffe5ea" : theme.card
-              }}
-              
-            >
-              <Text style={{color: isDark ? "#fff": theme.text}}>{item.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
 
     </View>
   );
@@ -545,10 +474,11 @@ const formatearFecha = (fecha) => {
         >
           <TouchableOpacity
             onPress={() => {
-              setFiltros(FILTROS_INICIALES); 
+              const nuevosFiltros = FILTROS_INICIALES;
 
-              aplicarFiltros({}); 
+              setFiltros(nuevosFiltros);
 
+              aplicarFiltros(construirFiltros(nuevosFiltros));
             }}
           >
             <Text style={{
@@ -605,19 +535,6 @@ const formatearFecha = (fecha) => {
     params.numContrato = filtros.numContrato.map(n => n.NumContrato);
   }
 
-  
-//   if (filtros.fechaRegistroProyecto.length) {
-//   const item = filtros.fechaRegistroProyecto[0];
-
-//   const fecha = item?.Fecha_Registro || item;
-
-//   const fechaFormateada = formatearFecha(fecha);
-
-//   params.fechaFinDesde = fechaFormateada;
-//   params.fechaFinHasta = fechaFormateada;
-//  }
-
-
   if (filtros.fechaFinProyecto.length) {
   const item = filtros.fechaFinProyecto[0];
 
@@ -636,11 +553,6 @@ const formatearFecha = (fecha) => {
   if (filtros.fechaHasta) {
     params.fechaHasta = filtros.fechaHasta;
   }
-
-  console.log("FILTROS RAW:", filtros.categoria);
-console.log("PARAMS FINALES:", JSON.stringify(params, null, 2));
-console.log(JSON.stringify(params, null, 2));
-console.log("FILTROS RAW:", filtros.categoria);
 
   aplicarFiltros(params);
   onClose();

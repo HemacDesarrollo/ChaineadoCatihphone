@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect,} from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   StatusBar,
   ActivityIndicator,
   TouchableOpacity,
-  Image
+  Image,
 } from "react-native";
 import AppHeader from "../components/AppHeader";
 import { useNavigation } from "@react-navigation/native";
@@ -18,13 +18,20 @@ import LottieView from "lottie-react-native";
 import { useTheme } from "../theme/ThemeContext";
 import BottomMenu from "../components/BottonMenu";
 import { useRecientesViewModel } from "../viewmodels/useRecientesViewModel";
+import { obtenerSitiosRecientes } from "../utils/sitiosStorage.js";
+
 
 
 export default function RecientesScreen() {
   const { theme, isDark } = useTheme();
   const vm = useRecientesViewModel();
   const insets = useSafeAreaInsets();
-  
+  const [sitiosRecientes, setSitiosRecientes] = useState([]);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+  obtenerSitiosRecientes().then(setSitiosRecientes);
+}, []);
 
   
   if (vm.loading) {
@@ -65,7 +72,7 @@ export default function RecientesScreen() {
   <View style={{ flex: 1 }}>
     
     <Text style={[styles.tituloSeccion, { color: theme.textTitle }]}>
-      Actividad reciente
+      Tickets Recientes
     </Text>
 
     <FlatList
@@ -85,49 +92,80 @@ export default function RecientesScreen() {
         style={{ width: 150, height: 150 }}
       />
 
-      <Text style={styles.emptyText}>
-        No se encontraron tickets
-      </Text>
+          <Text style={styles.emptyText}>
+            No se encontraron tickets
+          </Text>
 
-    </View>
-  }
-/>
+        </View>
+      }
+  />
 
   </View>
+
 
  
   <View style={{ flex: 1 }}>
-    
-    <Text style={[styles.tituloSeccion, { color: theme.textTitle }]}>
-      Mis proyectos
-    </Text>
 
-    <FlatList
-  data={vm.proyectos || []}
-  keyExtractor={(item, index) => index.toString()}
-  renderItem={({ item }) => <ItemProyecto item={item} theme={theme} isDark={isDark}/>}
-  showsVerticalScrollIndicator={false}
+    <View style={{ height: 1, backgroundColor: "#ccc" }} />
+  
+  <Text style={[styles.tituloSeccion, { color: theme.textTitle }]}>
+    Sitios Recientes
+  </Text>
+
+  <FlatList
+  data={sitiosRecientes || []}
+  keyExtractor={(item, index) =>
+  item.idSitio ? item.idSitio.toString() : index.toString()}
   contentContainerStyle={{ padding: 10 }}
-
-  ListEmptyComponent={
-    <View style={styles.emptyContainer}>
+  renderItem={({ item }) => (
+    
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("DetalleSitios", { sitio: item })
+      }
+    >
       
-      <LottieView
-        source={require("../assets/animations/ProyectoVacio.json")}
-        autoPlay
-        loop
-        style={{ width: 120, height: 120 }}
-      />
+      <View
+        style={[
+          styles.card,
+          {
+            borderColor: "#2176AE",
+            flexDirection: "row",
+            alignItems: "center",
+            borderWidth: 1,
+            elevation: 3,
+            backgroundColor: theme.card,
+          },
+        ]}
+      >
 
-      <Text style={styles.emptyText}>
-        No tienes proyectos activos
-      </Text>
+        <View style={[styles.iconBox, { backgroundColor: "#2176AE" }]}>
+          <Icon name="location" size={20} color="#fff" />
+        </View>
 
-    </View>
-  }
+        <View style={{ flex: 1 }}>
+
+          <Text style={[styles.codigo, { color: theme.text }]}>
+            {item.Nombre}
+          </Text>
+
+          <View style={{ flexDirection: "row" }}>
+            <Icon name="map" size={18} color={theme.icon} />
+            <Text style={[styles.codigo, { color: theme.text }]}>
+              {" "}{item.Municipio || "N/A"}
+            </Text>
+          </View>
+
+        </View>
+
+      </View>
+
+    </TouchableOpacity>
+
+  )}
 />
 
-  </View>
+</View>
 
 </View>
 

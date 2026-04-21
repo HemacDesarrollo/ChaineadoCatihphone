@@ -6,7 +6,7 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(false);
-
+  const [loadingTheme, setLoadingTheme] = useState(false);
 
   useEffect(() => {
     const loadTheme = async () => {
@@ -23,25 +23,33 @@ export const ThemeProvider = ({ children }) => {
     loadTheme();
   }, []);
 
-
   const toggleTheme = async () => {
     try {
-      const newValue = !isDark;
-      setIsDark(newValue);
+      setLoadingTheme(true);
 
-      await AsyncStorage.setItem(
-        "theme",
-        newValue ? "dark" : "light"
-      );
+      const newValue = !isDark;
+
+      setTimeout(async () => {
+        setIsDark(newValue);
+
+        await AsyncStorage.setItem(
+          "theme",
+          newValue ? "dark" : "light"
+        );
+
+        setLoadingTheme(false);
+      }, 800);
+
     } catch (error) {
-      console.log("Error guardando tema:", error);
+      console.log("Error:", error);
+      setLoadingTheme(false);
     }
   };
 
   const theme = isDark ? darkTheme : lightTheme;
 
   return (
-    <ThemeContext.Provider value={{ theme, isDark, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, isDark, toggleTheme, loadingTheme }}>
       {children}
     </ThemeContext.Provider>
   );

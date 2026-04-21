@@ -14,7 +14,7 @@ export default StyleSheet.create({
 
   margen: {
     flex: 1,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     marginTop: 10
   },
 
@@ -30,12 +30,14 @@ export default StyleSheet.create({
   },
 
   card: {
-    padding: 14,
+    padding: 12,
     borderRadius: 14,
-    marginBottom: 12,
-    elevation: 3,
+    marginBottom: 10,
+    marginRight: 2,
+    activeOpacity: 0.8,
+    elevation: 5,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 }
   },
@@ -48,16 +50,18 @@ export default StyleSheet.create({
 
   infoRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginTop: 4
   },
 
   infoBase: {
-    fontSize: 13
+    fontSize: 13,
+    flexWrap: "wrap"
   },
 
   infoBien: {
-    fontSize: 13
+    fontSize: 13,
+    flexWrap: "wrap"
   },
 
   searchContainer: {

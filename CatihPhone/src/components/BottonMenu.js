@@ -4,45 +4,105 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import UserAvatar from "./UserAvatar";
+import { useRoute } from "@react-navigation/native";
 
 export default function BottomMenu({onOpenFilters}) {
 
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const route = useRoute();
+
+  const isActive = (screen) => route.name === screen;
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       
       <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Home")}
-      >
-        <Icon name="home-outline" size={20} color="#fff" />
-        <Text style={styles.label}>Inicio</Text>
+        style={[
+          styles.button,
+          isActive("Home") && styles.activeButton
+              ]}
+              onPress={() => navigation.navigate("Home")}
+            >
+        <Icon
+          name="home-outline"
+          size={20}
+          color={isActive("Home") ? "#FFD700" : "#fff"}
+        />
+        <Text
+          style={[
+            styles.label,
+            { color: isActive("Home") ? "#FFD700" : "#fff" }
+          ]}
+        >
+          Inicio
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("MisTickets")}
-      >
-        <Icon name="ticket-outline" size={20} color="#fff" />
-        <Text style={[styles.label,{textAlign: "center"}]}>Mis {"\n"}Tickets</Text>
+        style={[
+          styles.button,
+          isActive("MisTickets") && styles.activeButton
+              ]}
+              onPress={() => navigation.navigate("MisTickets")}
+            >
+        <Icon
+          name="ticket-outline"
+          size={20}
+          color={isActive("MisTickets") ? "#FFD700" : "#fff"}
+        />
+        <Text
+          style={[
+            styles.label,
+            { color: isActive("MisTickets") ? "#FFD700" : "#fff" }
+          ]}
+        >
+          Tickets
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Recientes")}
-      >
-        <Icon name="time-outline" size={20} color="#fff" />
-        <Text style={styles.label}>Recientes</Text>
+        style={[
+          styles.button,
+          isActive("Recientes") && styles.activeButton
+              ]}
+              onPress={() => navigation.navigate("Recientes")}
+            >
+        <Icon
+          name="time-outline"
+          size={20}
+          color={isActive("Recientes") ? "#FFD700" : "#fff"}
+        />
+        <Text
+          style={[
+            styles.label,
+            { color: isActive("Recientes") ? "#FFD700" : "#fff" }
+          ]}
+        >
+          Recientes
+        </Text>
       </TouchableOpacity>
 
-        <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Sitios")}
-      >
-        <Icon name="location" size={20} color="#fff" />
-        <Text style={styles.label}>Sitios</Text>
+       <TouchableOpacity
+        style={[
+          styles.button,
+          isActive("Sitios") && styles.activeButton
+              ]}
+              onPress={() => navigation.navigate("Sitios")}
+            >
+        <Icon
+          name="location"
+          size={20}
+          color={isActive("Sitios") ? "#FFD700" : "#fff"}
+        />
+        <Text
+          style={[
+            styles.label,
+            { color: isActive("Sitios") ? "#FFD700" : "#fff" }
+          ]}
+        >
+          Sitios
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -102,5 +162,9 @@ const styles = StyleSheet.create({
   overflow: "hidden",
   backgroundColor: "#fff"
 },
+activeButton: {
+  borderTopWidth: 3,
+  borderTopColor: "#FFD700",
+}
 
 });

@@ -6,6 +6,7 @@ import AppNavigation from "./src/navigation/AppNavigator";
 import { enableScreens } from "react-native-screens";
 import { api } from "./src/api/connect";
 import { ThemeProvider } from "./src/theme/ThemeContext";
+import ThemeLoader from "./src/theme/ThemeLoader.js";
 
 enableScreens();
 
@@ -13,16 +14,21 @@ function RootApp() {
   const { registerInteraction } = useContext(AuthContext);
 
   return (
-    <View
-      style={{ flex: 1 }}
-      onTouchStart={registerInteraction}
-    >
-      <ThemeProvider>
-      <NavigationContainer>
-        <AppNavigation />
-      </NavigationContainer>
-      </ThemeProvider>
-    </View>
+    <ThemeProvider>
+      <View style={{ flex: 1 }} onTouchStart={registerInteraction}>
+
+        {/* CONTENIDO NORMAL */}
+        <View style={{ flex: 1 }}>
+          <NavigationContainer>
+            <AppNavigation />
+          </NavigationContainer>
+        </View>
+
+        {/* 🔥 OVERLAY GARANTIZADO ARRIBA */}
+        <ThemeLoader />
+
+      </View>
+    </ThemeProvider>
   );
 }
 

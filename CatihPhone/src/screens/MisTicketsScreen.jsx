@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import { useTheme } from "../theme/ThemeContext.js";
 import styles from "../styles/theme/ticketsStyles";
 import UserMenuModal from "../components/userMenuModals";
 import BottomMenu from "../components/BottonMenu";
+import SkeletonList from "../components/SkeletonList";
 
 import usePuntosConexionViewModel from "../viewmodels/useMisTicketsViewModel";
 import useUserMenuViewModel from "../viewmodels/useUserMenuViewModel";
@@ -109,7 +110,7 @@ export default function PuntosConexionScreen() {
     });
 
   vm.aplicarFiltrosAvanzados(filtros);
-  console.log("FILTROS ENVIADOS:", filtros);
+  //console.log("FILTROS ENVIADOS:", filtros);
 };
 
   const insets = useSafeAreaInsets();
@@ -124,7 +125,7 @@ export default function PuntosConexionScreen() {
     }
   }, [route.params]);
 
-  const renderItem = ({ item }) => {
+  const renderItem =  useCallback (({ item }) => {
     const statusColor =
       STATUS_COLORS[item.estatus?.toUpperCase()] || "#6b7280";
 
@@ -203,29 +204,43 @@ export default function PuntosConexionScreen() {
         </View> */}
       </TouchableOpacity>
     );
-  };
+  }, [theme])
 
 
-const ticketsFiltrados = Array.isArray(vm.tickets)
-  ? vm.tickets.filter((ticket) => {
+const ticketsFiltrados = useMemo(() => {
+  const search = vm.search?. toLocaleLowerCase().trim() || "";
 
-      const search = vm.search?.toLowerCase().trim() || "";
+  if (!search) return vm.tickets;
+  //if (!Array.isArray(vm.tickets)) return [];
 
-      const idLabel = ticket.id_label?.toString().toLowerCase() || "";
-      const codigo = `he-${ticket.id_label}`; 
+  return vm.tickets.filter((ticket) => {
+    //const search = vm.search?.toLowerCase().trim() || "";
+    const idLabel = ticket.id_label?.toString().toLowerCase() || "";
+    const codigo = `he-${ticket.id_label}`;
 
-      const esBusquedaCodigo = /^he-\d+$/.test(search);
+    const esBusquedaCodigo = /^he-\d+$/.test(search);
 
-      const coincideBusqueda =
-        search === "" ||
+    return (
+      search === "" ||
+      (/^\d+$/.test(search) && idLabel.startsWith(search)) ||
+      (esBusquedaCodigo && codigo.startsWith(search))
+    );
+  });
+}, [vm.tickets, vm.search]);
 
-        (/^\d+$/.test(search) && idLabel.startsWith(search)) ||
-
-        (esBusquedaCodigo && codigo.startsWith(search));
-
-      return coincideBusqueda;
-    })
-  : [];
+if (vm.loading && vm.tickets.length === 0) {
+  return (
+    <LinearGradient
+      colors={isDark ? ["#0F172A", "#1E293B"] : ["#2176AE", "#c7ddf5ff"]}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView style={styles.container}>
+        <AppHeader title={vm.headerConfig.title} />
+        <SkeletonList theme={theme} isDark={isDark} />
+      </SafeAreaView>
+    </LinearGradient>
+  );
+}
   return (
     <LinearGradient colors={
     isDark
@@ -237,6 +252,8 @@ const ticketsFiltrados = Array.isArray(vm.tickets)
       <SafeAreaView style={styles.container}>
     
         <AppHeader title={vm.headerConfig.title}/>
+
+          
 
         <View style={styles.margen}>
           <View style={styles.searchContainer}>
@@ -315,16 +332,16 @@ const ticketsFiltrados = Array.isArray(vm.tickets)
                     style={{ width: 200, height: 200 }}
                   />
 
-      <Text
-        style={{
-          marginTop: 10,
-          fontSize: 16,
-          color: "#fff",
-          textAlign: "center"
-        }}
-      >
-        No se encontraron resultados
-      </Text>
+              <Text
+                style={{
+                  marginTop: 10,
+                  fontSize: 16,
+                  color: "#fff",
+                  textAlign: "center"
+                }}
+              >
+                No se encontraron resultados
+              </Text>
 
     </View>
   ) : null
