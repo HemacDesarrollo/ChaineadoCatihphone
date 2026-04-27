@@ -11,6 +11,7 @@ export function useAuth() {
   const [status, setStatus] = useState("EN LINEA");
   const [loading, setLoading] = useState(true);
   const [sesionExpired, setSesionExpired] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(true);
 
   const userRef = useRef(user);
   const statusRef = useRef(status);
@@ -133,6 +134,10 @@ export function useAuth() {
 
   const loginUser = async (token) => {
 
+    console.log("AUTH HEADER:", api.defaults.headers.common["Authorization"]);
+
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
     await SecureStore.setItemAsync("CATI_token", token);
 
     const decoded = jwtDecode(token);
@@ -165,32 +170,39 @@ export function useAuth() {
 
   const clearSession = async (expired = false) => {
 
-    if (logoutTimer.current) {
-      clearTimeout(logoutTimer.current);
-      logoutTimer.current = null;
-    }
+  if (isLoggingOutRef.current) return;
+  isLoggingOutRef.current = true;
 
-    if (inactivityTimer.current) {
-      clearTimeout(inactivityTimer.current);
-      inactivityTimer.current = null;
-    }
+  if (logoutTimer.current) {
+    clearTimeout(logoutTimer.current);
+    logoutTimer.current = null;
+  }
 
-    try {
-      await api.put("/APP/usuarios/estatus", {
-        Estatus: "DESCONECTADO"
-      });
-    } catch {}
+  if (inactivityTimer.current) {
+    clearTimeout(inactivityTimer.current);
+    inactivityTimer.current = null;
+  }
 
-    await SecureStore.deleteItemAsync("CATI_token");
+  try {
+    await api.put("/APP/usuarios/estatus", {
+      Estatus: "DESCONECTADO"
+    });
+  } catch (e) {
+    console.log("Error enviando estatus:", e);
+  }
 
-    setUser(null);
-    setStatus("DESCONECTADO");
-    setFiltrosTickets({});
+  await SecureStore.deleteItemAsync("CATI_token");
 
-    if (expired) {
-      setSesionExpired(true);
-    }
-  };
+  setUser(null);
+  setStatus("DESCONECTADO");
+  setFiltrosTickets({});
+
+  if (expired) {
+    setSesionExpired(true);
+  }
+
+  isLoggingOutRef.current = false;
+};
 
   const logout = async () => {
     await clearSession(false);
@@ -241,6 +253,8 @@ export function useAuth() {
 
           } else {
 
+             api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
             const response = await api.get("/APP/usuarios/me");
 
             setUser({
@@ -256,11 +270,16 @@ export function useAuth() {
           }
         }
 
-      } catch {
+      } catch (error) {
+  console.log("ERROR RESTORE:", error);
+  
+  const status = error?.response?.status;
 
-        await clearSession(false);
-
-      } finally {
+  if (status === 401 || status === 403) {
+    await clearSession(true);
+  } else {
+    console.log("Error ignorado en restoreSession");
+  } } finally {
 
         setLoading(false);
 
@@ -274,25 +293,32 @@ export function useAuth() {
   useEffect(() => {
 
     const interceptor = api.interceptors.response.use(
-      (response) => response,
-      async (error) => {
+  (response) => response,
+  async (error) => {
 
-        const statusCode = error.response?.status;
-        const url = error.config?.url;
+    if (!error.response) {
+      console.log("Error sin response (red, timeout, etc)");
+      return Promise.reject(error);
+    }
 
-        if (
-          userRef.current &&
-          (statusCode === 401 || statusCode === 403) &&
-          url &&
-          !url.includes("/auth/login")
-        ) {
-          await clearSession(true);
-        }
+    const statusCode = error.response.status;
+    const url = error.config?.url;
 
-        return Promise.reject(error);
-      }
-    );
+    console.log("INTERCEPTOR STATUS:", statusCode, "URL:", url);
 
+    if (
+      userRef.current &&
+      (statusCode === 401 || statusCode === 403) &&
+      url &&
+      !url.includes("/auth/login")
+    ) {
+      console.log("LOGOUT POR 401/403");
+      await clearSession(true);
+    }
+
+    return Promise.reject(error);
+  }
+);
     return () => api.interceptors.response.eject(interceptor);
 
   }, []);

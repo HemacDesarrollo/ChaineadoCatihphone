@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,12 +9,13 @@ import {
   Linking,
   Image,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import AppHeader from "../components/AppHeader";
 import { useTheme } from "../theme/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { guardarReciente } from "../utils/recientesStorage";
+import { guardarReciente, obtenerRecientes } from "../utils/recientesStorage";
 import STATUS_COLORS from "../utils/ColorsEstatus";
 import styles from "../styles/theme/DetalleTicketStyle";
 import CameraWithCoords from "../components/CameraWithCoords";
@@ -27,9 +28,14 @@ import { API_BASE_URL } from "../api/connect";
 export default function DetalleTicketScreen() {
   const { theme, isDark } = useTheme();
   const route = useRoute();
+
+  const idTicket =
+  route.params?.idTicket || route.params?.ticket?.idTicket;
   const [showCamera, setShowCamera] = useState(false);
   const [image, setImages] = useState([]);
-  const {obtenerImagenes} = useDetalleTicketsViewModel();
+  const { obtenerImagenes, obtenerDetalleTicket } = useDetalleTicketsViewModel();
+  const [ticket, setTicket] = useState(route.params.ticket);
+
 
   const { user } = useContext(AuthContext);
 
@@ -37,33 +43,25 @@ export default function DetalleTicketScreen() {
 
   const navigation = useNavigation();
 
-  const { ticket } = route.params;
-  const { idTicket } = route.params;
-
-  useEffect(() => {
-    if (ticket) {
-      guardarReciente({ ...ticket });
-    }
-  }, []);
-
   const statusColor =
-    STATUS_COLORS[ticket.estatus?.toUpperCase()] || "#6b7280";
+  STATUS_COLORS[ticket?.estatus?.toUpperCase()] || "#6b7280";
 
 
-  const fechaFormateada = new Date(ticket.fechaCreacion).toLocaleDateString(
-    "es-MX",
-    {
+ const fechaFormateada = ticket?.fechaCreacion
+  ? new Date(ticket.fechaCreacion).toLocaleDateString("es-MX", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-    }
-  );
+    })
+  : "Sin fecha";
   // /.log("TICKET:", ticket);
+
+  console.log("TICKET ACTUAL:", ticket);
   return (
     <LinearGradient colors={
       isDark
-        ? ["#0F172A", "#1E293B"]
-        : ["#0076A7", "#003B5C"]
+        ? ["#0F172A", "#1E293B"] 
+        : ["#2176AE", "#c7ddf5ff"]
       } style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
@@ -92,8 +90,18 @@ export default function DetalleTicketScreen() {
 
   
             <View style={styles.topRow}>
-              <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
-                <Text style={styles.statusText}>{ticket.estatus}</Text>
+              <View style={{
+                backgroundColor: statusColor,
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderRadius: 8
+              }}>
+                <Text style={{
+                  color: "#fff",
+                  fontWeight: "bold"
+                }}>
+                  {ticket.estatus}
+                </Text>
               </View>
 
               <Text style={[styles.ticketId, {color: theme.text}]}>
@@ -103,6 +111,12 @@ export default function DetalleTicketScreen() {
 
             <View style={[styles.divider, {borderBottomColor: theme.subText}]} />
 
+            <Text style={[styles.sectionTitle, {color: theme.text}]}>
+              Sitio
+            </Text>
+            <Text style={[styles.infoText, {color: theme.text}]}>
+              {ticket.nombreSitio}
+            </Text>
 
             <Text style={[styles.sectionTitle, {color: theme.text}]}>
                 Categoria
@@ -131,15 +145,19 @@ export default function DetalleTicketScreen() {
                   Ubicación
               </Text>
             </View>
+            <Text style={[styles.infoText, { color: theme.text }]}>
+              {ticket.municipio}, {ticket.estado || ticket.Estado}
+            </Text>
             <View style={styles.infoRow}>
-              {/* <Icon name="location-outline" size={18} color="#f97316" /> */}
-              <Text style={[styles.infoText, { color: theme.text }]}>
-                {ticket.nombreSitio}
-              </Text>
-           </View>
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={[styles.infoText, { color: theme.text, marginTop: 4}]}>
+                    {ticket.direccion || "Sin dirección"}
+                  </Text>
+                </View>
+            </View>
            <View style={styles.infoRow}>
               <Text style={[styles.infoText, { color: theme.text }]}>
-                  Lat: {Number(ticket.Latitud).toFixed(4) + "..." || "N/A"} | Lng: {Number(ticket.Longitud).toFixed(4) +"..." || "N/A"}
+                  Lat: {ticket.latitud ? Number(ticket.latitud).toFixed(4) + "..." : "N/A"} | Lng: {ticket.longitud ? Number(ticket.longitud).toFixed(4) + "..." : "N/A"}
                 </Text>
                 </View>
 
@@ -147,7 +165,7 @@ export default function DetalleTicketScreen() {
                   <Icon name="location-outline" size={18} color="#06b6d4" />
                   <TouchableOpacity
                     onPress={() => {
-                        const url = `https://www.google.com/maps?q=${ticket.Latitud},${ticket.Longitud}`;
+                        const url = `https://www.google.com/maps?q=${ticket.latitud},${ticket.longitud}`;
                         Linking.openURL(url);
                     }}
                     >
@@ -187,19 +205,11 @@ export default function DetalleTicketScreen() {
             <Text style={[styles.sectionTitle, { color: theme.text }]}>Descripción</Text>
 
             <Text style={[styles.infoText,{ color: theme.text}]}>
-              {ticket.descripcion || "Sin descripción disponible"}
+              {ticket.descripcion}
             </Text>
             
         
           <View style={{flexDirection: "row"}}>
-            {/* <TouchableOpacity>
-            <Icon
-              name="attach-outline"
-              size={28}
-              color="#dd0f0fff"
-              style={{ marginTop: 10 }}
-            />
-            </TouchableOpacity> */}
             
             <TouchableOpacity onPress={() => setShowCamera(true)}>
             <Icon name="camera" size={28} color="#2fdd03ff" style={{marginTop: 10,}}></Icon>
@@ -230,8 +240,16 @@ export default function DetalleTicketScreen() {
        
             <View style={styles.buttonRow}>
 
-              <TouchableOpacity style={styles.btnPrimary}>
-                <Text style={styles.btnText}>Editar</Text>
+              <TouchableOpacity style={{flexDirection: "row", alignItems: "center"}}
+                onPress={() =>
+                navigation.navigate("EditarTicket", {
+                  ticket,
+                  onGoBack: (updatedTicket) => setTicket(updatedTicket)
+                })
+              }
+              >
+                <Icon name="create-outline" size={38} color="#3b82f6" />
+                <Text style={[styles.infoText, {color: theme.text}]}>Editar</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.btnDanger}>

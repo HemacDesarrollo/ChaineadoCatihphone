@@ -63,9 +63,39 @@ const obtenerImagenes = async (idTicket) => {
     return [];
   }
 };
+const obtenerDetalleTicket = async (idTicket) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/APP/tickets/${idTicket}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${user?.token}`,
+      },
+    });
+
+    const text = await response.text();
+
+try {
+  const data = JSON.parse(text);
+  console.log("DETALLE TICKET:", data);
+  return data;
+} catch (e) {
+  console.log("RESPUESTA NO ES JSON:", text);
+  return null;
+}
+
+    console.log("DETALLE TICKET:", data);
+
+    return data;
+
+  } catch (error) {
+    console.log("Error obtenerDetalleTicket:", error);
+    return null;
+  }
+};
   return {
     subirImagen,
     obtenerImagenes,
+    obtenerDetalleTicket
   };
 };
 

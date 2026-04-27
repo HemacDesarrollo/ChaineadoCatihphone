@@ -1,8 +1,7 @@
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create({
-
-  container: {
+export const stylesEdit = StyleSheet.create({
+ container: {
     flex: 1,
   },
 
@@ -28,6 +27,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 14,
     padding: 20,
+    borderColor: "#fff",
+    borderWidth: 1,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 6,
@@ -133,25 +134,13 @@ btnText: {
   color: "#fff",
   fontWeight: "bold",
 },
-
-cardImage: {
-    marginTop: 12,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 10,
-    elevation: 4, 
-  },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-  },
-  coords: {
-    marginTop: 6,
-    fontSize: 14,
-    color: "#555",
+  textArea: {
+    backgroundColor: "#f9fafb",
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    marginBottom: 10
   },
 
 });
-
-export default styles;

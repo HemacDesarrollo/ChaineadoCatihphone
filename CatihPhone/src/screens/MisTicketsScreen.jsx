@@ -35,6 +35,7 @@ export default function PuntosConexionScreen() {
   const {theme, isDark} = useTheme();
   const vm = usePuntosConexionViewModel();
   const {setFiltrosTickets} = useContext(AuthContext);
+  
   useEffect(() => {
 
   async function cargarCategorias() {
@@ -47,12 +48,7 @@ export default function PuntosConexionScreen() {
 
     } catch (error) {
 
-      //console.log("ERROR CARGANDO CATEGORIAS:", error);
-
-    }
-
-
-  }
+    } }
 
   cargarCategorias();
 
@@ -110,7 +106,6 @@ export default function PuntosConexionScreen() {
     });
 
   vm.aplicarFiltrosAvanzados(filtros);
-  //console.log("FILTROS ENVIADOS:", filtros);
 };
 
   const insets = useSafeAreaInsets();
@@ -186,7 +181,6 @@ export default function PuntosConexionScreen() {
         <View style={[styles.linea,{ borderBottomColor: theme.subText }]} />
 
         <View style={styles.infoRow}>
-          {/* <Text style={styles.info}>Asignado a:</Text> */}
           <View style={[styles.infoValueContainer,{ flexDirection: "row", alignItems: "center", justifyContent: "space-between"}]}>
             <View style={{flexDirection: "row", alignContent:"center"}}>
               <Icon name="person" size={18} color={theme.icon}/>
@@ -196,12 +190,6 @@ export default function PuntosConexionScreen() {
           </View>
         </View>
 
-        {/* <View style={styles.infoRow}>
-          <Text style={styles.info}>Fecha Creación:</Text>
-          <View style={styles.infoValueContainer}>
-            <Text style={styles.infoBase}>{item.fechaCreacion}</Text>
-          </View>
-        </View> */}
       </TouchableOpacity>
     );
   }, [theme])
@@ -211,10 +199,8 @@ const ticketsFiltrados = useMemo(() => {
   const search = vm.search?. toLocaleLowerCase().trim() || "";
 
   if (!search) return vm.tickets;
-  //if (!Array.isArray(vm.tickets)) return [];
 
   return vm.tickets.filter((ticket) => {
-    //const search = vm.search?.toLowerCase().trim() || "";
     const idLabel = ticket.id_label?.toString().toLowerCase() || "";
     const codigo = `he-${ticket.id_label}`;
 

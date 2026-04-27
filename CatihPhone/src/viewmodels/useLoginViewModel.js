@@ -29,16 +29,7 @@ export default function useLogin() {
   );
 
   const handleLogin = async () => {
-    {/*
-    const response = await login(usuario, password);
-
-console.log("LOGIN RESPONSE:", response);
-
-if (!response?.token) {
-  console.log("NO TOKEN RECEIVED");
-  return Alert.alert("Error", "No se recibió token");
-}
-    */}
+    
   if (!usuario.trim() || !password.trim()) {
     return Alert.alert("Error", "Completa usuario y contraseña");
   }

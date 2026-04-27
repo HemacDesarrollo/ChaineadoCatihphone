@@ -25,8 +25,8 @@ const FormularioImagenScreen = ({ route, navigation }) => {
   <LinearGradient
       colors={
         isDark
-          ? ["#0F172A", "#1E293B"]
-          : ["#0076A7", "#003B5C"]
+          ? ["#0F172A", "#1E293B"] 
+          : ["#2176AE", "#c7ddf5ff"]
       }
       style={{ flex: 1 }}
     >

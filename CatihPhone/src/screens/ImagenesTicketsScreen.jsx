@@ -66,8 +66,8 @@ useEffect(() => {
   <LinearGradient
   colors={
     isDark
-      ? ["#0F172A", "#1E293B"]
-      : ["#0076A7", "#003B5C"]
+      ? ["#0F172A", "#1E293B"] 
+      : ["#2176AE", "#c7ddf5ff"]
   }
   style={{ flex: 1 }}
 >
@@ -130,7 +130,7 @@ useEffect(() => {
               if (imagenes.length >= 10) {
               alert("Ya alcanzaste el límite de 10 imágenes");
               return;
-  }
+           }
 
               if (!tipo) return alert("Selecciona tipo");
               if (!descripcion) return alert("Agrega descripción");
@@ -149,7 +149,7 @@ useEffect(() => {
               setTipo(null);
               setDescripcion("");
 
-              cargarImagenes();
+              navigation.navigate("ImagenesTickets", { recargar: true });
             }}
             style={{
               marginTop: 10,

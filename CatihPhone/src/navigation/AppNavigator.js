@@ -14,6 +14,7 @@ import SitiosScreen from "../screens/SitiosScreen";
 import DetalleSitiosScreen from "../screens/DetalleSitiosScreen";
 import ImagenesTicketScreen from "../screens/ImagenesTicketsScreen";
 import FormularioImagenScreen from "../screens/FormularioImagenScreen";
+import EditarTicketScreen from "../screens/EditarTicketScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +37,7 @@ return (
         <Stack.Screen name="DetalleSitios" component={DetalleSitiosScreen} />
         <Stack.Screen name="ImagenesTicket" component={ImagenesTicketScreen} />
         <Stack.Screen name="FormularioImagen" component={FormularioImagenScreen} />
+        <Stack.Screen name="EditarTicket" component={EditarTicketScreen} />
       </>
     ) : (
       <>

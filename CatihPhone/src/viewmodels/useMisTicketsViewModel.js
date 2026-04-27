@@ -488,17 +488,7 @@ if (!nuevosFiltros || Object.keys(nuevosFiltros).length === 0) {
   setTickets([]);
   setHasMore(true);
 
-  // cargarTickets({
-  //   pagina: 1, filtros: nuevosFiltros
-  // });
-
 };
-
-//   useEffect(() => {
-//   if (esTicket) {
-//     cargarTickets({ pagina: 1, filtros: filtrosExtra });
-//   }
-// }, [esTicket]);
  
 
 useEffect(() => {
@@ -520,19 +510,6 @@ useEffect(() => {
   });
 
 }, [filtrosExtra]);
-
-//   useEffect(() => {
-
-//   if (!esTicket) return;
-
-//   console.log("FILTROS EXTRA FINAL:", filtrosExtra);
-//   cargarTickets({
-//     pagina: 1,
-//     filtros: filtrosExtra
-//   });
-
-// }, [filtrosExtra]);
-
 
 
   useEffect(() => {

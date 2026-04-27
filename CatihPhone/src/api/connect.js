@@ -2,7 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 const BASE_URLS = {
-  produccion: "http://192.168.44.179:3003"
+  produccion: "http://192.168.44.34:3003"
 };
 export const API_BASE_URL = BASE_URLS.produccion;
 
